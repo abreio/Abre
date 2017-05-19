@@ -22,7 +22,7 @@
 
   $fields = array(
   	'client_id' => urlencode(sitesettings('microsoftclientid')),
-  	'redirect_uri' => urlencode('http://localhost/core/microsoft_login_helper.php'),
+  	'redirect_uri' => urlencode($portal_root .'/core/microsoft_login_helper.php'),
   	'grant_type' => urlencode('authorization_code'),
   	'client_secret' => urlencode(sitesettings('microsoftclientsecret')),
   	'code' => urlencode($_POST['code']),

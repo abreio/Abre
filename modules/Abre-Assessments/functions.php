@@ -22,6 +22,23 @@
 	require_once(dirname(__FILE__) . '/../../core/abre_functions.php');
 	require_once('permissions.php');
 
+	function isAssessmentAdministrator(){
+		require(dirname(__FILE__) . '/../../core/abre_dbconnect.php');
+		$email = $_SESSION["useremail"];
+		//Check to see if they have the Assessment Administrator Role
+		$sql = "SELECT role FROM directory WHERE email = '$email'";
+		$result = $db->query($sql);
+		while($row = $result->fetch_assoc()){
+			$role = decrypt($row["role"], "");
+			if(strpos($role, 'Assessment Administrator') !== false){
+				$db->close();
+				return true;
+			}
+		}
+		$db->close();
+		return false;
+	}
+
 		function getCerticaToken()
 		{
 			$ch = curl_init();
@@ -115,6 +132,22 @@
 				mkdir("../../../$portal_private_root/Abre-Assessments/Exports", 0777, true);
 			}
 		}
+
+		function str_putcsv($input, $delimiter = ',', $enclosure = '"')
+    	{
+			// Open a memory "file" for read/write...
+			$fp = fopen('php://temp', 'r+');
+			// ... write the $input array to the "file" using fputcsv()...
+			fputcsv($fp, $input, $delimiter, $enclosure);
+			// ... rewind the "file" so we can read what we just wrote...
+			rewind($fp);
+			// ... read the entire line into a variable...
+			$data = fread($fp, 1048576);
+			// ... close the "file"...
+			fclose($fp);
+			// ... and return the $data to the caller, with the trailing newline from fgets() removed.
+			return rtrim($data, "\n");
+    	}
 
 		//Get Staff Name Given StaffID
 		function getStaffNameGivenStaffID($StaffID)
@@ -496,7 +529,7 @@
 				array_push($CSVExportArray,"$studentfinalpercentage");
 
 				//Delete Assessment Button
-				if($owner==1 or admin())
+				if($owner==1 || admin() || isAssessmentAdministrator())
 				{
 					echo "<td class='center-align'><a href='modules/".basename(__DIR__)."/openstudentresult.php?assessmentid=".$Assessment_ID."&student=".$User."' class='mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect mdl-color-text--grey-600 refreshresult'><i class='material-icons'>refresh</i></a></td>";
 					echo "<td class='center-align'><a href='modules/".basename(__DIR__)."/removestudentresult.php?assessmentid=".$Assessment_ID."&student=".$User."' class='mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect mdl-color-text--grey-600 removeresult'><i class='material-icons'>delete</i></a></td>";

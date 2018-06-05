@@ -31,7 +31,7 @@
 		$bankvalue = mysqli_real_escape_string($db, $bankvalue);
 		$gradevalue = mysqli_real_escape_string($db, $gradevalue);
 
-		$sql = "SELECT returnId, standard_id, standard_statementNotation, standard_description FROM Abre_Standards_Description WHERE (subject='$subjectvalue' AND document_title='$bankvalue' AND educationLevel='$gradevalue') GROUP BY standard_id ORDER BY standard_statementNotation, standard_description";
+		$sql = "SELECT returnId, standard_id, standard_statementNotation, standard_description FROM Abre_Standards_Description WHERE (subject='$subjectvalue' AND document_title='$bankvalue' AND educationLevel='$gradevalue') GROUP BY standard_description ORDER BY standard_statementNotation, standard_description";
 		$result = $db->query($sql);
 		while($row = $result->fetch_assoc())
 		{

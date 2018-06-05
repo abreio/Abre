@@ -23,10 +23,10 @@
 
 	if($_SESSION['usertype'] != 'parent'){
   		if($_SESSION['auth_service'] == 'google'){
-				DisplayWidget('drive','cloud','Drive','#FF9800','https://drive.google.com');
+				DisplayWidget('drive','cloud','Drive','#FF9800','https://drive.google.com', true);
 			}
 			if($_SESSION['auth_service'] == 'microsoft'){
-				DisplayWidget('drive','cloud','Drive','#FF9800','https://onedrive.live.com/');
+				DisplayWidget('drive','cloud','Drive','#FF9800','https://onedrive.live.com/', true);
 			}
 
 	}

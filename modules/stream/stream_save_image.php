@@ -35,11 +35,9 @@
 			{
 				$image = "";
 			}
-			
 		}
 		else
 		{
-
 			//Make sure image is over http or https
 			$url = parse_url($image);
 			if($url['scheme'] == 'https' xor $url['scheme'] == 'http'){
@@ -53,6 +51,7 @@
 	
 				//If it already saved, read from local server
 				if (file_exists($filename)){
+
 					$image = $portal_root."/modules/stream/stream_serve_image.php?file=$imagefile&ext=$fileExtension";
 					if(filesize($filename) < 1000){
 						$image = "";

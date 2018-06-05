@@ -19,10 +19,16 @@
 	//Required configuration files
 	require(dirname(__FILE__) . '/../../configuration.php');
 	require_once(dirname(__FILE__) . '/../../core/abre_verification.php');
+	require_once(dirname(__FILE__) . '/../../core/abre_functions.php');
   require_once(dirname(__FILE__) . '/../../modules/stream/functions.php');
 
-	if($_SESSION['usertype'] == 'parent'){
-    DisplayWidget('Abre-Students','supervisor_account','My Students','#9E9E9E', $portal_root.'/#mystudents');
+	if(isAppActive("Abre-Students")){
+		if($_SESSION['usertype'] == 'parent'){
+			DisplayWidget('Abre-Students','supervisor_account','My Students','#9E9E9E', $portal_root.'/#mystudents', false);
+		}
+		if($_SESSION['usertype'] == "staff"){
+			DisplayWidget('Abre-Students','supervisor_account','Students','#9E9E9E', $portal_root.'/#students', false);
+		}
 	}
 
 ?>

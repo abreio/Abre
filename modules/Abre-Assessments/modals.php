@@ -21,6 +21,7 @@
 	require(dirname(__FILE__) . '/../../core/abre_dbconnect.php');
 	require_once(dirname(__FILE__) . '/../../core/abre_functions.php');
 	require_once('permissions.php');
+	require_once('functions.php');
 
 	if($pagerestrictions=="")
 	{
@@ -113,7 +114,7 @@
         </div>
 
   			<?php
-  			if(admin())
+  			if(admin() || isAssessmentAdministrator())
   			{
           echo "<div class='row'>";
     				echo "<div class='col s12'>";

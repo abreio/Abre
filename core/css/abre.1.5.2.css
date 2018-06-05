@@ -262,6 +262,9 @@ ul.tabs > li.tab > a.active{ opacity: 1; }
 .loginholder{ padding:20px 40px 20px 40px; background-color:#f1f1f1; border-top:#d3d3d3 1px solid; }
 .loginholder_large{ padding:20px 40px 30px 40px; background-color:#f1f1f1; border-top:#d3d3d3 1px solid; }
 
+/* Copyright Text */
+.copyrighttext{ color:#fff; }
+
 /* Responsive */
 @media only screen and (max-width : 600px){
 	.loginholder{ padding:0 40px 20px 40px; background-color:#fff; border-top:none; }
@@ -318,6 +321,7 @@ ul.tabs > li.tab > a.active{ opacity: 1; }
 	#streamwidgets{ display:none; }
 	#streamstream{ width:100%; float:left; }
 	#streamnavigation{ min-height:0; width:100%; margin:0 0 8px 0; }
+  .copyrighttext{ color:#2B2D4A !important; }
 }
 @media only screen and (min-width: 601px) and (max-width: 850px){
 	.card_stream{ width:calc(50% - 16px); margin:8px; }

@@ -20,6 +20,7 @@
 	require_once(dirname(__FILE__) . '/../../core/abre_verification.php');
 	require_once(dirname(__FILE__) . '/../../core/abre_functions.php');
 	require_once(dirname(__FILE__) . '/../../core/abre_dbconnect.php');
+	require_once('functions.php');
 
 	//Add the course
 	$assessment_id=mysqli_real_escape_string($db, $_POST["assessmentIDduplicateid"]);
@@ -42,7 +43,7 @@
 			$Assessment_Level=mysqli_real_escape_string($db, $row2["Level"]);
 			$Assessment_Verified=mysqli_real_escape_string($db, $row2["Verified"]);
 
-			if(!admin()){ if($Assessment_Verified==1){ $Assessment_Verified=$Assessment_ID; }  }
+			if(!admin() && !isAssessmentAdministrator()){ if($Assessment_Verified==1){ $Assessment_Verified=$Assessment_ID; }  }
 
 			$timedate=time();
 			$string=$timedate.$_SESSION['useremail'];

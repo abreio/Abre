@@ -60,11 +60,8 @@
 							$WidgetCount++;
 
 						}
-
 					}
-
 				}
-
 			}
 		}
 
@@ -135,7 +132,7 @@
 				ui.item.removeClass('widget_tilt');
 			},
 			update: function(event, ui){
-				var postData = $(this).sortable('serialize');
+				var postData = $(this).sortable('serialize', {expression: /(.+)[=_](.+)/});
 				<?php
 					echo "$.post('$portal_root/modules/stream/save_widget_order.php', {list: postData})";
 				?>
@@ -194,7 +191,12 @@
 			var BodyDiv = $(this).closest(".collapsible-body");
 			var Path = $(this).data('path');
 			var Reload = $(this).data('reload');
-			window.open($(this).data('link'), '_blank');
+			var newTab = $(this).data('newtab');
+			if(!newTab){
+				window.location.href = $(this).data('link');
+			}else{
+				window.open($(this).data('link'), '_blank');
+			}
 			if(Reload === true)
 			{
 				setTimeout(function(){ loadWidget(BodyDiv,Path); }, 5000);
@@ -219,8 +221,13 @@
 		$(".widgeticonlink").off().on("click", function(event) {
 			event.stopPropagation();
 			var link = $(this).data('link');
+			var newtab = $(this).data('newtab');
 			if(link != ""){
-				window.open($(this).data('link'), '_blank');
+				if(newtab){
+					window.open($(this).data('link'), '_blank');
+				}else{
+					window.location.href = $(this).data('link');
+				}
 			}
 		});
 

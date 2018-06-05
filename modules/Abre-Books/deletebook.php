@@ -21,6 +21,11 @@
 	require_once(dirname(__FILE__) . '/../../core/abre_verification.php');
 	require_once('permissions.php');
 
+	$cloudsetting=constant("USE_GOOGLE_CLOUD");
+	if ($cloudsetting=="true") 
+		require(dirname(__FILE__). '/../../vendor/autoload.php');
+	use Google\Cloud\Storage\StorageClient;
+
 	if($booksadmin==1)
 	{
 
@@ -57,21 +62,38 @@
 			$Slug=htmlspecialchars($row["Slug"], ENT_QUOTES);
 			if($Slug!="")
 			{
-				//Delete epub
-				$oldfile = dirname(__FILE__) . "/../../../$portal_private_root/books/" . $Slug . '.epub';
-				unlink($oldfile);
+				if ($cloudsetting=="true") {
+					$storage = new StorageClient([
+						'projectId' => constant("GC_PROJECT")
+					]);	
+					$bucket = $storage->bucket(constant("GC_BUCKET"));			
+					//Delete epub
+					$cloud_book = "private_html/books/books/" . $Slug . '.epub';
+					$object = $bucket->object($cloud_book);
+					$object->delete();
 
-				//Delete png
-				$oldfile = dirname(__FILE__) . "/../../../$portal_private_root/books/" . $Slug . '.png';
-				unlink($oldfile);
+					//Delete png
+					$cloud_book = "private_html/books/books/" . $Slug . '.png';
+					$object = $bucket->object($cloud_book);
+					$object->delete();
+				}
+				else {			
+					//Delete epub
+					$oldfile = dirname(__FILE__) . "/../../../$portal_private_root/books/" . $Slug . '.epub';
+					unlink($oldfile);
 
-				//Delete extracted epub folder
-				$oldfile = dirname(__FILE__) . "/../../../$portal_private_root/books/" . $Slug;
-				Delete($oldfile );
+					//Delete png
+					$oldfile = dirname(__FILE__) . "/../../../$portal_private_root/books/" . $Slug . '.png';
+					unlink($oldfile);
 
-				//Delete extracted epub folder public
-				$oldfile = "$portal_path_root/modules/Abre-Books/books/$Slug";
-				Delete($oldfile );
+					//Delete extracted epub folder
+					$oldfile = dirname(__FILE__) . "/../../../$portal_private_root/books/" . $Slug;
+					Delete($oldfile );
+
+					//Delete extracted epub folder public
+					$oldfile = "$portal_path_root/modules/Abre-Books/books/$Slug";
+					Delete($oldfile );
+				}
 			}
 		}
 

@@ -84,7 +84,7 @@
 					echo "</div>";
 
 					//Settings
-					if(admin())
+					if(superadmin())
 					{
 						echo "<div class='location pointer' style='padding:2px 30px 2px 30px;' data-location='settings'>";
 							echo "<div style='float:left; padding:23px 20px 0 0;'>";

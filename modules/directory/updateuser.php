@@ -24,6 +24,11 @@
 	require_once('functions.php');
 	require_once('../../core/abre_functions.php');
 
+	$cloudsetting=constant("USE_GOOGLE_CLOUD");
+	if ($cloudsetting=="true") 
+		require(dirname(__FILE__). '/../../vendor/autoload.php');
+	use Google\Cloud\Storage\StorageClient;
+
 	//Update the User
 	if($pageaccess == 1){
 
@@ -180,23 +185,28 @@
 		    $fileExtension = strrchr($_FILES['picture']['name'], ".");
 		    if(in_array($fileExtension, $validExtensions)){
 					$newNamePrefix = time() . '_';
-	        $manipulator = new ImageManipulator($_FILES['picture']['tmp_name']);
-	        $manipulator->resample(500, 500);
-	        $width  = $manipulator->getWidth();
-	        $height = $manipulator->getHeight();
-	        $centreX = round($width / 2);
-	        $centreY = round($height / 2);
-	        $x1 = $centreX - 150;
-	        $y1 = $centreY - 150;
+				$manipulator = new ImageManipulator($_FILES['picture']['tmp_name']);
+				$manipulator->resample(500, 500);
+				$width  = $manipulator->getWidth();
+				$height = $manipulator->getHeight();
+				$centreX = round($width / 2);
+				$centreY = round($height / 2);
+				$x1 = $centreX - 150;
+				$y1 = $centreY - 150;
 
-	        $x2 = $centreX + 150;
-	        $y2 = $centreY + 150;
+				$x2 = $centreX + 150;
+				$y2 = $centreY + 150;
 
-	        $newImage = $manipulator->crop($x1, $y1, $x2, $y2);
-	        // saving file to uploads folder
-	        $picturefilename = $newNamePrefix . $_FILES['picture']['name'];
-	        $manipulator->save($portal_path_root."/../$portal_private_root/directory/images/employees/" . $picturefilename);
-		    }
+				$newImage = $manipulator->crop($x1, $y1, $x2, $y2);
+				// saving file to uploads folder
+				$picturefilename = $newNamePrefix . $_FILES['picture']['name'];
+				if ($cloudsetting=="true") {
+					$manipulator->saveGC("private_html/directory/images/employees/". $picturefilename);				
+				}
+				else {
+					$manipulator->save($portal_path_root."/../$portal_private_root/directory/images/employees/" . $picturefilename);				
+				}
+			}	
 		}else{
 			$picturefilename = $currentpicture;
 		}
@@ -206,25 +216,47 @@
 			if($_FILES['discipline']['name']){
 				//Upload File to Server
 				$validExtensions = array('.doc', '.DOC', '.docx', '.DOCX', '.pdf', '.PDF');
-		    $fileExtension = strrchr($_FILES['discipline']['name'], ".");
-		    if(in_array($fileExtension, $validExtensions)){
+		    	$fileExtension = strrchr($_FILES['discipline']['name'], ".");
+		    	if(in_array($fileExtension, $validExtensions)){
 					$newNamePrefix = time() . '$_$';
-			    $disfilename = $newNamePrefix . $_FILES['discipline']['name'];
-					if(!move_uploaded_file($_FILES['discipline']['tmp_name'], $portal_path_root . "/../$portal_private_root/directory/discipline/" . $disfilename)){
-						echo "The file was not uploaded";
+			    	$disfilename = $newNamePrefix . $_FILES['discipline']['name'];
+
+					$cloud_directory = "private_html/directory/discipline/" . $disfilename;
+					if ($cloudsetting=="true") {
+						$storage = new StorageClient([
+							'projectId' => constant("GC_PROJECT")
+						]);	
+						$bucket = $storage->bucket(constant("GC_BUCKET"));				
+				
+						$options = [
+							'resumable' => true,
+							'name' => $cloud_directory,
+							'metadata' => [
+								'contentLanguage' => 'en'
+							]
+						];
+						$upload = $bucket->upload(
+							fopen($_FILES['discipline']['tmp_name'], "r"),
+							$options
+						);					
+					}
+					else {
+						if(!move_uploaded_file($_FILES['discipline']['tmp_name'], $portal_path_root . "/../$portal_private_root/directory/discipline/" . $disfilename)){
+							echo "The file was not uploaded";
+						}	
 					}
 
 					//Add Record to Database
-			    include "../../core/abre_dbconnect.php";
-			    $stmtdiscipline = $db->stmt_init();
-			    $sqldiscipline = "INSERT INTO directory_discipline (UserID,Filename) VALUES (?, ?);";
-			    $stmtdiscipline->prepare($sqldiscipline);
+					include "../../core/abre_dbconnect.php";
+					$stmtdiscipline = $db->stmt_init();
+					$sqldiscipline = "INSERT INTO directory_discipline (UserID,Filename) VALUES (?, ?);";
+					$stmtdiscipline->prepare($sqldiscipline);
 					$stmtdiscipline->bind_param("is", $id, $disfilename);
 					$stmtdiscipline->execute();
 					$stmtdiscipline->store_result();
 					$stmtdiscipline->close();
 					$db->close();
-		    }
+		    	}
 			}
 		}
 

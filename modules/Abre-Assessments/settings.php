@@ -23,7 +23,7 @@
 	require(dirname(__FILE__) . '/../../core/abre_dbconnect.php');
 
 	//Settings
-	if(admin())
+	if(superadmin())
 	{
 		echo "<form id='form-assessments-settings' method='post' enctype='multipart/form-data' action='modules/".basename(__DIR__)."/updatesettings.php'>";
 			echo "<div class='mdl-shadow--2dp' style='background-color:#fff; padding:20px 40px 40px 40px'>";

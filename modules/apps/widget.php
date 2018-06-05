@@ -22,9 +22,9 @@
 	require_once('functions.php');
 
 	if($_SESSION['usertype'] != 'parent'){
-  		
-  		DisplayWidget('apps','apps','Apps','#9C27B0','');
-	
+
+  		DisplayWidget('apps','apps','Apps','#9C27B0','', true);
+
 	}
-	
+
 ?>

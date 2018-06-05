@@ -22,25 +22,60 @@
 	require_once(dirname(__FILE__) . '/../../core/abre_functions.php');
 	require_once('permissions.php');
 	
+	$cloudsetting=constant("USE_GOOGLE_CLOUD");
+	if ($cloudsetting=="true") 
+		require(dirname(__FILE__). '/../../vendor/autoload.php');
+	use Google\Cloud\Storage\StorageClient;
+
 	if($pagerestrictions=="")
 	{
-	
 		$UserEmail=$_SESSION['useremail'];
-		$file = "../../../$portal_private_root/Abre-Assessments/Exports/$UserEmail.csv";
-		
-		if (file_exists($file)) {
-		    header('Content-Description: File Transfer');
-		    header('Content-Type: application/octet-stream');
-		    header('Content-Disposition: attachment; filename=AssessmentDataExport.csv');
-		    header('Content-Transfer-Encoding: binary');
-		    header('Expires: 0');
-		    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-		    header('Pragma: public');
-		    header('Content-Length: ' . filesize($file));
-		    if(ob_get_length() > 0){ ob_end_clean(); }
-		    flush();
-		    readfile($file);
-		    exit;
+
+		if ($cloudsetting=="true") {
+			$storage = new StorageClient([
+				'projectId' => constant("GC_PROJECT")
+			]);	
+			$bucket = $storage->bucket(constant("GC_BUCKET"));	
+			$cloud_assessment = "private_html/Abre-Assessments/Exports/$UserEmail.csv";
+
+			if ($bucket->object($cloud_assessment)->exists()){
+
+				$info = $bucket->object($cloud_assessment)->info();
+				$filesize = $info['size'];
+
+				header('Content-Description: File Transfer');
+				header('Content-Type: application/octet-stream');
+				header('Content-Disposition: attachment; filename=AssessmentDataExport.csv');
+				header('Content-Transfer-Encoding: binary');
+				header('Expires: 0');
+				header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+				header('Pragma: public');
+				header('Content-Length: ' . $filesize);
+				if(ob_get_length() > 0){ ob_end_clean(); }
+				flush();
+
+				$object = $bucket->object($cloud_assessment);
+				$file = $object->downloadAsStream();
+				echo($file);
+			}
+		}
+		else {	
+			$file = "../../../$portal_private_root/Abre-Assessments/Exports/$UserEmail.csv";
+			
+			if (file_exists($file)) {
+				header('Content-Description: File Transfer');
+				header('Content-Type: application/octet-stream');
+				header('Content-Disposition: attachment; filename=AssessmentDataExport.csv');
+				header('Content-Transfer-Encoding: binary');
+				header('Expires: 0');
+				header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+				header('Pragma: public');
+				header('Content-Length: ' . filesize($file));
+				if(ob_get_length() > 0){ ob_end_clean(); }
+				flush();
+				readfile($file);
+				exit;
+			}
 		}
 
 	}

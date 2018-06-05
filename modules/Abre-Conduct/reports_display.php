@@ -25,17 +25,22 @@
 
 	if(admin() or conductAdminCheck($_SESSION['useremail']) or conductMonitor($_SESSION['useremail'])){
 
-		//Filter admin results by access buildings
-		$query = "SELECT SchoolCode FROM Abre_Staff where EMail1 = '".$_SESSION['useremail']."'";
-		$dbreturn = databasequery($query);
-		$buildingfilter = "SchoolCode = ''";
-		foreach ($dbreturn as $value){
-			$AdminSchoolCode = htmlspecialchars($value["SchoolCode"], ENT_QUOTES);
-			$buildingfilter = "$buildingfilter OR SchoolCode = '$AdminSchoolCode'";
-		}
-
 		if(admin()){
-			$buildingfilter = "SchoolCode = '' OR SchoolCode = 'HA' OR SchoolCode = 'HABP' OR SchoolCode = 'HABW' OR SchoolCode = 'HACW' OR SchoolCode = 'HAFS' OR SchoolCode = 'HAFW' OR SchoolCode = 'HAGA' OR SchoolCode = 'HAHL' OR SchoolCode = 'HAHS' OR SchoolCode = 'HALN' OR SchoolCode = 'HARV' OR SchoolCode = 'HARW' OR SchoolCode = 'HAWI'";
+			$schoolCodes = getAllSchoolCodes();
+			$buildingfilter = "";
+			foreach($schoolCodes as $code){
+				$buildingfilter = $buildingfilter."SchoolCode = '$code' OR ";
+			}
+			$buildingfilter = rtrim($buildingfilter, " OR ");
+		}else{
+			//Filter admin results by access buildings
+			$query = "SELECT SchoolCode FROM Abre_Staff where EMail1 = '".$_SESSION['useremail']."'";
+			$dbreturn = databasequery($query);
+			$buildingfilter = "SchoolCode = ''";
+			foreach ($dbreturn as $value){
+				$AdminSchoolCode = htmlspecialchars($value["SchoolCode"], ENT_QUOTES);
+				$buildingfilter = "$buildingfilter OR SchoolCode = '$AdminSchoolCode'";
+			}
 		}
 
 		if(isset($_POST["conductsearch"])){ $ConductSearch = mysqli_real_escape_string($db, $_POST["conductsearch"]); }else{ $ConductSearch = ""; }

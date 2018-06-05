@@ -255,18 +255,20 @@
 	$cardcount = 0;
 	for($cardcountloop = 0; $cardcountloop < $totalcount; $cardcountloop++){
 		$date = $feeds[$cardcountloop]['date'];
+
+		//Title
 		$title = $feeds[$cardcountloop]['title'];
 		$title = str_replace("<p>", " ", $title);
 		$title = strip_tags(html_entity_decode($title));
-		$title = preg_replace('/(\.)([[:alpha:]]{2,})/', '$1 $2', $title);
 		$title = str_replace("'",'"',$title);
 		$title = str_replace('"',"'",$title);
 		$title = str_replace('’',"'",$title);
 		$title = str_replace('—',"-",$title);
+
+		//Excerpt
 		$excerpt = $feeds[$cardcountloop]['excerpt'];
 		$excerpt = str_replace("<p>", " ", $excerpt);
 		$excerpt = strip_tags(html_entity_decode($excerpt));
-		$excerpt = preg_replace('/(\.)([[:alpha:]]{2,})/', '$1 $2', $excerpt);
 		$excerpt = str_replace("'",'"',$excerpt);
 		$excerpt = str_replace('"',"'",$excerpt);
 		$excerpt = str_replace('’',"'",$excerpt);
@@ -287,7 +289,11 @@
 		$owner = $feeds[$cardcountloop]['owner'];
 
 		//Add images to server to securely store and reference
-		include "stream_save_image.php";
+		$cloudsetting=constant("USE_GOOGLE_CLOUD");
+		if ($cloudsetting=="true") 
+			include "stream_save_image_gc.php";
+		else
+			include "stream_save_image.php";
 
 		$link = mysqli_real_escape_string($db, $linkraw);
 		if (useAPI()) {
@@ -296,7 +302,7 @@
 
 			//Counts
 			$num_rows_comment = $result['counts']['comments'];
-			$num_rows_like = $result['counts']['likes'];                            
+			$num_rows_like = $result['counts']['likes'];
 		}
 		else {
 			//Comment count

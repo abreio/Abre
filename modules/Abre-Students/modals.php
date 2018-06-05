@@ -39,7 +39,7 @@
 						<div class='col s1 right-align'><a class="modal-close"><i class='material-icons' style='color: #fff;'>clear</i></a></div>
 					</div>
 					<div style='padding: 0px 24px 0px 24px;'>
-						<?php if(GetStaffID($_SESSION['useremail']) != "ABREDEMO"){ error_log("yes");?>
+						<?php if(GetStaffID($_SESSION['useremail']) != "ABREDEMO"){ ?>
 							<div class="row">
 								<div class="input-field col s12"><input id="group_name" name="group_name" placeholder="Name of the Group" type="text" required></div>
 							</div>

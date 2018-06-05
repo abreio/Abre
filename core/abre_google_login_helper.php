@@ -43,10 +43,7 @@
         $_SESSION['useremail'] = $userEmail;
         $_SESSION['picture'] = getSiteLogo();
         $_SESSION['usertype'] = 'parent';
-
-        $me = $Service_Plus->people->get('me');
-        $displayName = $me['displayName'];
-        $_SESSION['displayName'] = $displayName;
+        $_SESSION['displayName'] = $userData['name'];
       }
     }
 

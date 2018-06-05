@@ -19,6 +19,12 @@
 	//Include required files
 	require_once(dirname(__FILE__) . '/../configuration.php');
 
+	$cloudsetting=constant("USE_GOOGLE_CLOUD");
+	if ($cloudsetting=="true") 
+		require(dirname(__FILE__). '/../vendor/autoload.php');
+	use Google\Cloud\Storage\StorageClient;
+
+
 	function useApi() {
 
 		if(isset($_SESSION['api_url'])){
@@ -55,7 +61,7 @@
 		}
 	}
 
-	//Find user ID given an email
+	//Determine if users is superadmin or district admin
 	function admin(){
 		include "abre_dbconnect.php";
 		$sql = "SELECT COUNT(*) FROM users WHERE email = '".$_SESSION['useremail']."' AND superadmin = 1";
@@ -77,6 +83,7 @@
 		return false;
 	}
 
+	//Determine if a user is a superadmin
 	function superadmin(){
 		include "abre_dbconnect.php";
 		$sql = "SELECT COUNT(*) FROM users WHERE email = '".$_SESSION['useremail']."' AND superadmin = 1";
@@ -131,6 +138,44 @@
 		}else{
 			return true;
 		}
+	}
+
+	//returns an array containing all school codes and school names for a given
+	//district
+	function getAllSchoolCodesAndNames(){
+		require('abre_dbconnect.php');
+		$schoolResults = array();
+		if($db->query("SELECT * FROM Abre_Students LIMIT 1")){
+			$sql = "SELECT SchoolCode, SchoolName FROM Abre_Students ORDER BY SchoolCode";
+			$query = $db->query($sql);
+			while($results = $query->fetch_assoc()){
+				if($results['SchoolCode'] == ''){
+					continue;
+				}else{
+					$schoolResults[$results['SchoolCode']] = $results['SchoolName'];
+				}
+			}
+		}
+		$db->close();
+		return $schoolResults;
+	}
+
+	//returns an array containing all school codes for a district
+	function getAllSchoolCodes(){
+		require('abre_dbconnect.php');
+		$schoolCodes = array();
+		if($db->query("SELECT * FROM Abre_Students LIMIT 1")){
+			$sql = "SELECT SchoolCode FROM Abre_Students ORDER BY SchoolCode";
+			$query = $db->query($sql);
+			while($results = $query->fetch_assoc()){
+					array_push($schoolCodes, $results['SchoolCode']);
+				}
+			}
+		if(sizeof($schoolCodes) != 0){
+			$schoolCodes = array_unique($schoolCodes, SORT_REGULAR);
+		}
+		$db->close();
+		return $schoolCodes;
 	}
 
 	//set verified session data for parent
@@ -257,10 +302,39 @@
 
 		//Save image to server
 		$im = imagecreatefromstring($data);
-		if(!file_exists("../../../$portal_private_root/guide")){
-			mkdir("../../../$portal_private_root/guide", 0777, true);
+
+		if ($cloudsetting=="true") {
+
+			$storage = new StorageClient([
+				'projectId' => constant("GC_PROJECT")
+			]);	
+			$bucket = $storage->bucket(constant("GC_BUCKET"));	
+
+			$cloud_dir = "private_html/guide/";
+
+			ob_start (); 
+			imagejpeg($im);
+			$image_data = ob_get_contents (); 
+			ob_end_clean ();
+
+			$options = [
+				'resumable' => true,
+				'name' => $cloud_dir . $fileName,
+				'metadata' => [
+					'contentLanguage' => 'en'
+				]
+			];
+			$upload = $bucket->upload(
+				$image_data,
+				$options
+			);
 		}
-		imagejpeg($im, "../../../$portal_private_root/guide/$filename");
+		else {
+			if(!file_exists("../../../$portal_private_root/guide")){
+				mkdir("../../../$portal_private_root/guide", 0777, true);
+			}	
+			imagejpeg($im, "../../../$portal_private_root/guide/$filename");
+		}
 	}
 
 	//Retrieve Site Title
@@ -453,7 +527,15 @@
 			$valuereturn = "/core/images/abre/abre_glyph.png";
 		}else{
 			if($valuereturn != '/core/images/abre/abre_glyph.png'){
-				$valuereturn = "/content/$valuereturn";
+
+				$cloudsetting=constant("USE_GOOGLE_CLOUD");
+				if ($cloudsetting=="true") {
+					$bucket = constant("GC_BUCKET");
+					$valuereturn = "https://storage.googleapis.com/$bucket/content/$valuereturn";
+				}
+				else {
+					$valuereturn = "/content/$valuereturn";
+				}			
 			}else{
 				$valuereturn="/core/images/abre/abre_glyph.png";
 			}
@@ -718,6 +800,10 @@
 	}
 
 	function isAppActive($appName){
+		//return true if any of these apps are checked. This is primarily used for the edit widgets view.
+		if($appName == "calendar" || $appName == "classroom" || $appName == "drive" || $appName == "mail"){
+			return true;
+		}
 		include "abre_dbconnect.php";
 		$sql = "SELECT COUNT(*) FROM apps_abre WHERE app='$appName' AND active = 1";
 		$query = $db->query($sql);

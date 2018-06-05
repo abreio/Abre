@@ -23,10 +23,10 @@
 
 	if($_SESSION['usertype'] != 'parent'){
 		if($_SESSION['auth_service'] == "google"){
-			DisplayWidget('calendar','event','Calendar','#2196F3','https://calendar.google.com');
+			DisplayWidget('calendar','event','Calendar','#2196F3','https://calendar.google.com', true);
 		}
 		if($_SESSION['auth_service'] == "microsoft"){
-			DisplayWidget('calendar','event','Calendar','#2196F3','https://outlook.live.com/');
+			DisplayWidget('calendar','event','Calendar','#2196F3','https://outlook.live.com/', true);
 		}
 	}
 

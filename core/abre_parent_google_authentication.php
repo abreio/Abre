@@ -37,5 +37,4 @@
 	$client->setIncludeGrantedScopes(true);
 
   $Service_Oauth2 = new Google_Service_Oauth2($client);
-  $Service_Plus = new Google_Service_Plus($client);
 ?>

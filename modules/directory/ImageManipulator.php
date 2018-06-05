@@ -1,4 +1,10 @@
 <?php
+
+$cloudsetting=constant("USE_GOOGLE_CLOUD");
+if ($cloudsetting=="true") 
+	require(dirname(__FILE__). '/../../vendor/autoload.php');
+use Google\Cloud\Storage\StorageClient;
+    
 class ImageManipulator
 {
     /**
@@ -207,7 +213,55 @@ class ImageManipulator
         $this->height = imagesy($res);
         return $this;
     }
-    
+
+    /**
+     * Save current image to file for Google Cloud
+     * 
+     * @param string $fileName
+     * @return void
+     * @throws RuntimeException
+     */
+    public function saveGC($fileName, $type = IMAGETYPE_JPEG)
+    {    
+        $storage = new StorageClient([
+			'projectId' => constant("GC_PROJECT")
+		]);	
+		$bucket = $storage->bucket(constant("GC_BUCKET"));
+
+        switch ($type) {
+            case IMAGETYPE_GIF  :
+                ob_start (); 
+                imagegif($this->image);
+                $image_data = ob_get_contents (); 
+                ob_end_clean ();
+                break;
+            case IMAGETYPE_PNG  :
+                ob_start (); 
+                imagepng($this->image);
+                $image_data = ob_get_contents (); 
+                ob_end_clean ();
+                 break;
+            case IMAGETYPE_JPEG :
+            default             :
+                ob_start (); 
+                imagejpeg($this->image);
+                $image_data = ob_get_contents (); 
+                ob_end_clean ();
+        }
+
+        $options = [
+            'resumable' => true,
+            'name' => $fileName,
+            'metadata' => [
+                'contentLanguage' => 'en'
+            ]
+        ];
+        $upload = $bucket->upload(
+            $image_data,
+            $options
+        );
+    }
+
     /**
      * Save current image to file
      * 

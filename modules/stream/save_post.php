@@ -21,6 +21,10 @@
 	require(dirname(__FILE__) . '/../../core/abre_dbconnect.php');
 	require_once(dirname(__FILE__) . '/../../core/abre_functions.php');
 
+	$cloudsetting=constant("USE_GOOGLE_CLOUD");
+	if ($cloudsetting=="true") 
+		require(dirname(__FILE__). '/../../vendor/autoload.php');
+	use Google\Cloud\Storage\StorageClient;
 
   $postAuthor = $_SESSION['useremail'];
   $sql = "SELECT firstname, lastname FROM directory WHERE email = '$postAuthor'";
@@ -81,15 +85,38 @@
 		$fileextention = pathinfo($file, PATHINFO_EXTENSION);
 		$cleanfilename = basename($file);
 		$image_file_name = time() . "_post." . $fileextention;
-		$uploaddir = $portal_path_root . "/../$portal_private_root/stream/cache/images/" . $image_file_name;
 
-		//Upload new image
-		$postimage = $uploaddir;
-		move_uploaded_file($_FILES['customimage']['tmp_name'], $postimage);
+		if ($cloudsetting=="true") {
+			$storage = new StorageClient([
+				'projectId' => constant("GC_PROJECT")
+			]);	
+			$bucket = $storage->bucket(constant("GC_BUCKET"));
+	
+			$uploaddir = "private_html/stream/cache/images/" . $image_file_name;
+			//Upload new image
+			$postimage = $uploaddir;
+			$options = [
+				'resumable' => true,
+				'name' => $postimage,
+				'metadata' => [
+					'contentLanguage' => 'en'
+				]
+			];
+			$upload = $bucket->upload(
+				fopen($_FILES['customimage']['tmp_name'], 'r'),
+				$options
+			);
+		}
+		else {
+			$uploaddir = $portal_path_root . "/../$portal_private_root/stream/cache/images/" . $image_file_name;
 
-		//Resize image
-		ResizeImage($uploaddir, "1000", "90");
-
+			//Upload new image
+			$postimage = $uploaddir;
+			move_uploaded_file($_FILES['customimage']['tmp_name'], $postimage);
+	
+			//Resize image
+			ResizeImage($uploaddir, "1000", "90");	
+		}	
 	}
 
 

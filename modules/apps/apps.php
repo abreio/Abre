@@ -30,14 +30,6 @@
 
 		//Display Staff Apps
 		echo "<div class='row'><p style='text-align:center; font-weight:600;'>My Staff Apps</p><hr style='margin-bottom:20px;'>";
-		$sql = "SELECT title, image, link, staff_building_restrictions FROM apps WHERE staff = 1 AND required = 1 ORDER BY sort";
-		$result = $db->query($sql);
-		$item = array();
-
-		while($row = $result->fetch_assoc()){
-			$title = htmlspecialchars($row["title"], ENT_QUOTES);
-			$image = htmlspecialchars($row["image"], ENT_QUOTES);
-			$link = htmlspecialchars($row["link"], ENT_QUOTES);
 			echo "<ul class='appssort'>";
 
 			$required = array();
@@ -153,8 +145,7 @@
 					}
 				}
 			}
-		}
-		echo "</ul>";
+			echo "</ul>";
 	  echo "</div>";
 	}
 
@@ -201,13 +192,6 @@
 		}else{
 			//Display editable student apps
 			echo "<div class='row'><p style='text-align:center; font-weight:600;'>Student Apps</p><hr style='margin-bottom:20px;'>";
-			$sql = "SELECT title, image, link FROM apps WHERE student = 1 AND required = 1 ORDER BY sort";
-			$result = $db->query($sql);
-			$item = array();
-			while($row = $result->fetch_assoc()){
-				$title = htmlspecialchars($row["title"], ENT_QUOTES);
-				$image = htmlspecialchars($row["image"], ENT_QUOTES);
-				$link = htmlspecialchars($row["link"], ENT_QUOTES);
 				echo "<ul class='appssort'>";
 
 				$required = array();
@@ -321,8 +305,7 @@
 						}
 					}
 				}
-			}
-			echo "</ul>";
+				echo "</ul>";
 			echo "</div>";
 		}
 	}

@@ -21,6 +21,11 @@
 	require_once(dirname(__FILE__) . '/../../core/abre_dbconnect.php');
 	require_once(dirname(__FILE__) . '/../../core/abre_functions.php');
 
+	$cloudsetting=constant("USE_GOOGLE_CLOUD");
+	if ($cloudsetting=="true") 
+		require(dirname(__FILE__). '/../../vendor/autoload.php');
+	use Google\Cloud\Storage\StorageClient;
+
 		//Get POST Data
 		if(isset($_POST['json'])){
 			$formDataArray = $_POST['json'];
@@ -36,23 +41,73 @@
 					$hashedFileName = sha1($value['name']);
 					$file_name = $hashedFileName.".".$fileextension;
 
-					$uploaddir = $portal_path_root . "/../$portal_private_root/Abre-Forms/".$formDataArray['formid']."/" . $file_name;
-					if(!file_exists($portal_path_root . "/../$portal_private_root/Abre-Forms/".$formDataArray['formid']."/")){
-						mkdir($portal_path_root . "/../$portal_private_root/Abre-Forms/".$formDataArray['formid']."/", 0775);
-					}
-					if(!file_exists($uploaddir)){
-						move_uploaded_file($value['tmp_name'], $uploaddir);
-						$filename = $value['name'];
-					}else{
-						$i = 1;
-						while(file_exists($uploaddir)){
-							$filename = $fileNameNoExtension." ($i).".$fileextension;
-							$hashedFileName = sha1($filename);
-							$file_name = $hashedFileName.".".$fileextension;
-							$uploaddir = $portal_path_root . "/../$portal_private_root/Abre-Forms/".$formDataArray['formid']."/" . $file_name;
-							$i++;
+					if ($cloudsetting=="true") {
+						$storage = new StorageClient([
+							'projectId' => constant("GC_PROJECT")
+						]);	
+						$bucket = $storage->bucket(constant("GC_BUCKET"));				
+						$uploaddir = "private_html/Abre-Forms/".$formDataArray['formid']."/" . $file_name;
+						$upload = "private_html/Abre-Forms/".$formDataArray['formid']."/";
+						if (!$bucket->object($upload)->exists()){
 						}
-						move_uploaded_file($value['tmp_name'], $uploaddir);
+
+						if (!$bucket->object($uploaddir)->exists()){
+
+							$options = [
+								'resumable' => true,
+								'name' => $uploaddir,
+								'metadata' => [
+									'contentLanguage' => 'en'
+								]
+							];
+							$upload = $bucket->upload(
+								fopen($value['tmp_name'], "r"),
+								$options
+							);
+							$filename = $value['name'];
+						}
+						else {
+							$i = 1;
+							while(file_exists($uploaddir)){
+								$filename = $fileNameNoExtension." ($i).".$fileextension;
+								$hashedFileName = sha1($filename);
+								$file_name = $hashedFileName.".".$fileextension;
+								$uploaddir = "private_html/Abre-Forms/".$formDataArray['formid']."/" . $file_name;
+								$i++;
+							}
+
+							$options = [
+								'resumable' => true,
+								'name' => $uploaddir,
+								'metadata' => [
+									'contentLanguage' => 'en'
+								]
+							];
+							$upload = $bucket->upload(
+								fopen($value['tmp_name'], "r"),
+								$options
+							);
+						}
+					}
+					else {
+						$uploaddir = $portal_path_root . "/../$portal_private_root/Abre-Forms/".$formDataArray['formid']."/" . $file_name;
+						if(!file_exists($portal_path_root . "/../$portal_private_root/Abre-Forms/".$formDataArray['formid']."/")){
+							mkdir($portal_path_root . "/../$portal_private_root/Abre-Forms/".$formDataArray['formid']."/", 0775);
+						}
+						if(!file_exists($uploaddir)){
+							move_uploaded_file($value['tmp_name'], $uploaddir);
+							$filename = $value['name'];
+						}else{
+							$i = 1;
+							while(file_exists($uploaddir)){
+								$filename = $fileNameNoExtension." ($i).".$fileextension;
+								$hashedFileName = sha1($filename);
+								$file_name = $hashedFileName.".".$fileextension;
+								$uploaddir = $portal_path_root . "/../$portal_private_root/Abre-Forms/".$formDataArray['formid']."/" . $file_name;
+								$i++;
+							}
+							move_uploaded_file($value['tmp_name'], $uploaddir);
+						}	
 					}
 
 					$fileFieldName = str_replace("_", " ", $key);
@@ -60,7 +115,6 @@
 					$formDataArray[$fileFieldName] = array();
 					$storeName = htmlspecialchars($filename, ENT_QUOTES);
 					$formDataArray[$fileFieldName][$storeName] = $file_name;
-
 				}
 			}
 		}

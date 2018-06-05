@@ -33,14 +33,7 @@
 	//used for routing after verifying a student.
 	$url = $portal_root .'/#mystudents';
 
-	require(dirname(__FILE__) . '/../../core/abre_dbconnect.php');
-	if($db->query("SELECT * FROM Abre_Students LIMIT 1")){
-		$sql = "SELECT SchoolCode, SchoolName FROM Abre_Students ORDER BY SchoolCode";
-		$schoolResults = databasequery($sql);
-	}
-	if(!isset($schoolResults)){
-		$schoolResults = array();
-	}
+	$schoolResults = getAllSchoolCodesAndNames();
 ?>
 
 	<!--Apps modal-->
@@ -111,14 +104,8 @@
 								<select name="staffRestriction[]" id="appsStaffRestrictions" multiple>
 									<option value="No Restrictions">All Buildings</option>
 									<?php
-									$lastSchoolCode = "";
-									foreach($schoolResults as $school){
-										if($school['SchoolCode'] == $lastSchoolCode){
-											continue;
-										}else{
-											echo "<option value='".$school['SchoolCode']."'>".ucwords(strtolower($school['SchoolName']))."</option>";
-											$lastSchoolCode = $school['SchoolCode'];
-										}
+									foreach($schoolResults as $code=>$school){
+										echo "<option value='$code'>".ucwords(strtolower($school))."</option>";
 									}
 									?>
 								</select>
@@ -134,13 +121,8 @@
 									<option value="No Restrictions">All Buildings</option>
 									<?php
 									$lastSchoolCode = "";
-									foreach($schoolResults as $school){
-										if($school['SchoolCode'] == $lastSchoolCode){
-											continue;
-										}else{
-											echo "<option value='".$school['SchoolCode']."'>".ucwords(strtolower($school['SchoolName']))."</option>";
-											$lastSchoolCode = $school['SchoolCode'];
-										}
+									foreach($schoolResults as $code=>$school){
+										echo "<option value='$code'>".ucwords(strtolower($school))."</option>";
 									}
 									?>
 								</select>

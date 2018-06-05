@@ -20,8 +20,8 @@
 	require_once(dirname(__FILE__) . '/../../core/abre_verification.php');
 	require_once(dirname(__FILE__) . '/../../core/abre_dbconnect.php');
 	require_once(dirname(__FILE__) . '/../../core/abre_functions.php');
-	require_once('logic.php');
 	require_once('functions.php');
+	require_once('logic.php');
 	require_once('permissions.php');
 
 	if($pagerestrictions=="")

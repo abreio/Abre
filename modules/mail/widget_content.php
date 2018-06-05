@@ -65,7 +65,7 @@
 								}
 
 						echo "<hr class='widget_hr'>";
-						echo "<div class='widget_holder widget_holder_link pointer' data-link='https://mail.google.com/mail/u/0/#inbox/$message_id' data-path='/modules/mail/widget_content.php' data-reload='true'>";
+						echo "<div class='widget_holder widget_holder_link pointer' data-link='https://mail.google.com/mail/u/0/#inbox/$message_id' data-newtab='true' data-path='/modules/mail/widget_content.php' data-reload='true'>";
 							echo "<div class='widget_container widget_heading_h1 truncate'>$sendertext</div>";
 							if($sendertext!="Google"){ echo "<div class='widget_container widget_heading_h2 truncate'>$subjecttext</div>"; }
 							if($sendertext!=""){ echo "<div class='widget_container widget_body truncate'>$snippet</div>"; }
@@ -118,7 +118,7 @@
 						$snippet = $unreadEmailArray['value'][$i]['bodyPreview'];
 
 						echo "<hr class='widget_hr'>";
-						echo "<div class='widget_holder widget_holder_link pointer' data-link='$webLink' data-path='/modules/mail/widget_content.php' data-reload='true'>";
+						echo "<div class='widget_holder widget_holder_link pointer' data-link='$webLink' data-newtab='true' data-path='/modules/mail/widget_content.php' data-reload='true'>";
 							echo "<div class='widget_container widget_heading_h1 truncate'>$sendertext</div>";
 							if($sendertext != "Google"){ echo "<div class='widget_container widget_heading_h2 truncate'>$subjecttext</div>"; }
 							if($sendertext != ""){ echo "<div class='widget_container widget_body truncate'>$snippet</div>"; }

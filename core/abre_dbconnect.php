@@ -24,5 +24,11 @@
 	$db_user = constant("DB_USER");
 	$db_password = constant("DB_PASSWORD");
 	$db_name = constant("DB_NAME");
-	$db = new mysqli($db_host, $db_user, $db_password, $db_name);
+	$db_socket = constant("DB_SOCKET");
+
+	$cloudsetting=constant("USE_GOOGLE_CLOUD");
+	if ($cloudsetting=="true") 
+		$db = new mysqli($db_host, $db_user, $db_password, $db_name, null, $db_socket);
+	else
+		$db = new mysqli($db_host, $db_user, $db_password, $db_name);
 ?>

@@ -23,10 +23,10 @@
 
 	if($_SESSION['usertype'] != 'parent'){
 		if($_SESSION['auth_service'] == "google"){
-			DisplayWidget('mail','mail','Mail','#F44336','https://mail.google.com');
+			DisplayWidget('mail','mail','Mail','#F44336','https://mail.google.com', true);
 		}
 		if($_SESSION['auth_service'] == "microsoft"){
-			DisplayWidget('mail','mail','Mail','#F44336','https://outlook.office.com/');
+			DisplayWidget('mail','mail','Mail','#F44336','https://outlook.office.com/', true);
 		}
 	}
 

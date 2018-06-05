@@ -23,6 +23,15 @@
 
 	echo "<option value='' disabled selected>Choose a Role</option>";
 
+	//Assessment Roles
+	if(isAppActive("Abre-Assessments")){
+		if(strpos($role, 'Assessment Administrator') !== false){
+			echo "<option value='Assessment Administrator' selected='selected'>Assessment Administrator</option>";
+		}else{
+			echo "<option value='Assessment Administrator'>Assessment Administrator</option>";
+		}
+	}
+
 	//Conduct Roles
 	if(isAppActive("Abre-Conduct")){
 		if(strpos($role, 'Conduct Administrator') !== false){
@@ -54,30 +63,30 @@
 		echo "<option value='Directory Administrator'>Directory Administrator</option>";
 	}
 
-	if(strpos($role, 'Directory Supervisor') !== false){
-		echo "<option value='Directory Supervisor' selected='selected'>Directory Supervisor</option>";
-	}else{
-		echo "<option value='Directory Supervisor'>Directory Supervisor</option>";
-	}
-
 	if(strpos($role, 'Directory Advisor') !== false){
 		echo "<option value='Directory Advisor' selected='selected'>Directory Advisor</option>";
 	}else{
 		echo "<option value='Directory Advisor'>Directory Advisor</option>";
 	}
 
+	if(strpos($role, 'Directory Supervisor') !== false){
+		echo "<option value='Directory Supervisor' selected='selected'>Directory Supervisor</option>";
+	}else{
+		echo "<option value='Directory Supervisor'>Directory Supervisor</option>";
+	}
+
 	//Plans Roles
 	if(isAppActive("Abre-Plans")){
-		if(strpos($role, 'District Plans Administrator') !== false){
-			echo "<option value='District Plans Administrator' selected='selected'>District Plans Administrator</option>";
-		}else{
-			echo "<option value='District Plans Administrator'>District Plans Administrator</option>";
-		}
-
 		if(strpos($role, 'Building Plans Administrator') !== false){
 			echo "<option value='Building Plans Administrator' selected='selected'>Building Plans Administrator</option>";
 		}else{
 			echo "<option value='Building Plans Administrator'>Building Plans Administrator</option>";
+		}
+
+		if(strpos($role, 'District Plans Administrator') !== false){
+			echo "<option value='District Plans Administrator' selected='selected'>District Plans Administrator</option>";
+		}else{
+			echo "<option value='District Plans Administrator'>District Plans Administrator</option>";
 		}
 	}
 

@@ -133,7 +133,7 @@
 				<div style='padding: 0px 24px 0px 24px;'>
 
 					<div class="row" style='margin-bottom:0;'>
-						<div class='input-field col s12' id="streamTitle" style="font-weight:700; font-size:24px; line-height:32px;"></div>
+						<div class='wrap-links input-field col s12' id="streamTitle" style="font-weight:700; font-size:24px; line-height:32px;"></div>
 					</div>
 					<div class="row" id='streamPhotoHolder'>
 						<div class="input-field col s12">
@@ -142,7 +142,7 @@
 					</div>
 					<div class="row">
 						<div class='input-field col s12'>
-							<p id="streamExcerptDisplay" name="streamExcerptDisplay" style="font-size:16px; line-height:1.8em"></p>
+							<p class='wrap-links' id="streamExcerptDisplay" name="streamExcerptDisplay" style="font-size:16px; line-height:1.8em"></p>
 						</div>
 						<div class='input-field col s12'>
 							<a id="streamLink" href="" style="text-decoration: underline; color: <?php echo getSiteColor(); ?>;" target="_blank">View full article</a>
@@ -219,7 +219,7 @@
 
 										include(dirname(__FILE__) . '/../'.$result.'/widget_config.php');
 
-										if(strpos($restrictions,$_SESSION['usertype']) === false && strpos($services, $_SESSION['auth_service']) !== false){
+										if(strpos($restrictions,$_SESSION['usertype']) === false && strpos($services, $_SESSION['auth_service']) !== false && isAppActive($result)){
 
 											$widgetcounter++;
 

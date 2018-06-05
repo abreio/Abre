@@ -141,6 +141,7 @@
 				$_SESSION['picture'] = $userPicture;
         $_SESSION['auth_service'] = "google";
 				$_SESSION['usertype'] = NULL;
+				$_SESSION['displayName'] = $userData['name'];
 
 				if($studentdomain == NULL){ $studentdomain = $site_domain; }
 		        $userdomain = substr($_SESSION['useremail'], strpos($_SESSION['useremail'], '@'));
@@ -173,10 +174,6 @@
           $_SESSION['useremail'] = NULL;
           header("Location: $portal_root?signout");
         }
-
-				$me = $Service_Plus->people->get('me');
-				$displayName = $me['displayName'];
-				$_SESSION['displayName'] = $displayName;
 			}
 		}else{
 			$authUrl = $client->createAuthUrl();

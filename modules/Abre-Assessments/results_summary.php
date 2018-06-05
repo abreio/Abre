@@ -57,12 +57,12 @@
 					echo "<option value='' disabled selected>Choose a View</option>";
 					echo "<option value='course'>View by Course</option>";
 					echo "<option value='group'>View by Group</option>";
-					if(AdminCheck($_SESSION['useremail']) or admin())
+					if(AdminCheck($_SESSION['useremail']) || admin() || isAssessmentAdministrator())
 					{
 						echo "<option value='teacher'>View by Teacher</option>";
 						echo "<option value='building'>View by Building</option>";
 					}
-					if($owner!=0 or admin()){ echo "<option value='all'>View All Results</option>"; }
+					if($owner!=0 || admin() || isAssessmentAdministrator()){ echo "<option value='all'>View All Results</option>"; }
 				echo "</select>";
 			echo "</div>";
 			echo "<div class='col l4 s12'>";

@@ -55,7 +55,7 @@
 					}
 
 					echo "<hr class='widget_hr'>";
-						echo "<div class='widget_holder widget_holder_link pointer' data-link='$drivelink' data-path='/modules/drive/widget_content.php' data-reload='false'>";
+						echo "<div class='widget_holder widget_holder_link pointer' data-link='$drivelink' data-newtab='true' data-path='/modules/drive/widget_content.php' data-reload='false'>";
 						echo "<div class='widget_container widget_heading_h1 truncate'>$drivetitle</div>";
 						echo "<div class='widget_container widget_body truncate'>$drivemodifydate</div>";
 					echo "</div>";
@@ -109,7 +109,7 @@
 					}
 
 					echo "<hr class='widget_hr'>";
-						echo "<div class='widget_holder widget_holder_link pointer' data-link='$drivelink' data-path='/modules/drive/widget_content.php' data-reload='false'>";
+						echo "<div class='widget_holder widget_holder_link pointer' data-link='$drivelink' data-newtab='true' data-path='/modules/drive/widget_content.php' data-reload='false'>";
 						echo "<div class='widget_container widget_heading_h1 truncate'>$drivetitle</div>";
 						echo "<div class='widget_container widget_body truncate'>$drivemodifydate</div>";
 					echo "</div>";

@@ -24,7 +24,7 @@
 	if($_SESSION['usertype'] != 'parent'){
 
 			if($_SESSION['auth_service'] == "google"){
-				DisplayWidget('classroom','class','Classroom','#4CAF50','https://classroom.google.com');
+				DisplayWidget('classroom','class','Classroom','#4CAF50','https://classroom.google.com', true);
 			}
 
 	}

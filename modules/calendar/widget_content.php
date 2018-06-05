@@ -73,7 +73,7 @@
 					}
 
 					echo "<hr class='widget_hr'>";
-					echo "<div class='widget_holder widget_holder_link pointer' data-link='$eventlink' data-path='/modules/calendar/widget_content.php' data-reload='false'>";
+					echo "<div class='widget_holder widget_holder_link pointer' data-link='$eventlink' data-newtab='true' data-path='/modules/calendar/widget_content.php' data-reload='false'>";
 						echo "<div class='widget_container widget_heading_h1 truncate'>$eventitle</div>";
 						echo "<div class='widget_container widget_body truncate'>$timeofevent</div>";
 					echo "</div>";

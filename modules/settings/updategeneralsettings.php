@@ -22,6 +22,11 @@
 	require_once(dirname(__FILE__) . '/../../core/abre_functions.php');
 	require(dirname(__FILE__) . '/../../core/abre_dbconnect.php');
 
+	$cloudsetting=constant("USE_GOOGLE_CLOUD");
+	if ($cloudsetting=="true") 
+		require(dirname(__FILE__). '/../../vendor/autoload.php');
+	use Google\Cloud\Storage\StorageClient;
+
 	//Update system settings
 	if(admin()){
 
@@ -48,17 +53,55 @@
 			$fileextention = pathinfo($file, PATHINFO_EXTENSION);
 			$cleanfilename = basename($file);
 			$sitelogofilename = time() . "siteicon." . $fileextention;
-			$uploaddir = $portal_path_root.'/content/';
 
-			//Delete previous image
-			$sitelogoexisting = getSiteLogo();
-			$oldimagelocation = $portal_path_root.$sitelogoexisting;
-			if($sitelogoexisting != '/core/images/abre/abre_glyph.png'){ unlink($oldimagelocation); }
+			if ($cloudsetting=="true") {
+				$storage = new StorageClient([
+					'projectId' => constant("GC_PROJECT")
+				]);	
+				$bucket = $storage->bucket(constant("GC_BUCKET"));		
 
-			//Upload new image
-			if (!file_exists("$portal_path_root/content/")){ mkdir("$portal_path_root/content/"); }
-			$sitelogo = $uploaddir . $sitelogofilename;
-			move_uploaded_file($_FILES['sitelogo']['tmp_name'], $sitelogo);
+				$cloud_uploaddir = "content/";
+				//Delete previous image
+				$sitelogoexisting = getSiteLogo();
+				if($sitelogoexisting != '/core/images/abre/abre_glyph.png'){ 
+					$logo = getSettingsDbValue('sitelogo');
+					$oldimagelocation = $cloud_uploaddir.$logo;
+
+					if ($bucket->object($oldimagelocation)->exists()){
+						$object = $bucket->object($oldimagelocation);
+						$object->delete();
+					}
+				}
+
+				//Upload new image
+				$sitelogo = $cloud_uploaddir . $sitelogofilename;
+				$options = [
+					'resumable' => true,
+					'name' => $sitelogo,
+					'metadata' => [
+						'contentLanguage' => 'en'
+					]
+				];
+				$upload = $bucket->upload(
+					fopen($_FILES['sitelogo']['tmp_name'], 'r'),
+					$options
+				);
+				$acl = $upload->acl();
+				$acl->add('allUsers', 'READER');
+			}
+			else {
+				$uploaddir = $portal_path_root.'/content/';
+
+				//Delete previous image
+				$sitelogoexisting = getSiteLogo();
+				$oldimagelocation = $portal_path_root.$sitelogoexisting;
+				if($sitelogoexisting != '/core/images/abre/abre_glyph.png'){ unlink($oldimagelocation); }
+	
+				//Upload new image
+				if (!file_exists("$portal_path_root/content/")){ mkdir("$portal_path_root/content/"); }
+				$sitelogo = $uploaddir . $sitelogofilename;
+				move_uploaded_file($_FILES['sitelogo']['tmp_name'], $sitelogo);	
+			}
 		}else{
 			$sitelogoexisting = getSiteLogo();
 			if(strpos($sitelogoexisting, '/content/') !== false){

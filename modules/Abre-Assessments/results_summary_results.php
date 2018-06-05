@@ -24,6 +24,11 @@
 	require_once('functions.php');
 	require_once('permissions.php');
 
+	$cloudsetting=constant("USE_GOOGLE_CLOUD");
+	if ($cloudsetting=="true") 
+		require(dirname(__FILE__). '/../../vendor/autoload.php');
+	use Google\Cloud\Storage\StorageClient;
+
 	if($pagerestrictions=="")
 	{
 
@@ -52,7 +57,7 @@
 		$owner = $returnrow["COUNT(*)"];
 
 		//If admin or Admin Make an Owner
-		if(admin() or AdminCheck($_SESSION['useremail'])){ $owner=1; }
+		if(admin() || isAssessmentAdministrator() || AdminCheck($_SESSION['useremail'])){ $owner=1; }
 
 		if(isset($_GET["course"]))
 		{
@@ -148,9 +153,12 @@
 
 						//CSV Export Prepare
 						$CSVExportArray= array();
-						CSVExport();
+						if ($cloudsetting!="true") 
+							CSVExport();
 						$UserEmail=$_SESSION['useremail'];
-						$CSVExportFile = fopen(dirname(__FILE__) . "../../../../$portal_private_root/Abre-Assessments/Exports/$UserEmail.csv", 'w');
+						$CSVGC = "";
+						if ($cloudsetting!="true") 
+							$CSVExportFile = fopen(dirname(__FILE__) . "../../../../$portal_private_root/Abre-Assessments/Exports/$UserEmail.csv", 'w');
 
 						$CSVHeaderArray = array();
 						array_push($CSVHeaderArray, "Student", "StudentID", "Status");
@@ -162,7 +170,10 @@
 							array_push($CSVHeaderArray, "Question ".$i);
 						}
 						array_push($CSVHeaderArray, "IEP", "ELL", "Gifted", "Auto Points", "Rubric Points", "Score", "Percentage");
-						fputcsv($CSVExportFile, $CSVHeaderArray);
+						if ($cloudsetting=="true") 
+							$CSVGC .= str_putcsv($CSVHeaderArray);
+						else
+							fputcsv($CSVExportFile, $CSVHeaderArray);
 
 						while($row = $result->fetch_assoc())
 						{
@@ -192,12 +203,36 @@
 							}
 
 							$CSVExportArrayreturn = ShowAssessmentResults($Assessment_ID,$User,$StudentID,$ResultName,$IEP,$ELL,$Gifted,$questioncount,$owner,$totalstudents,$studentcounter,$totalresultsbystudentarray,$StudentScoresArray,$StudentStatusArray,$StudentsInClass,$QuestionDetails,$CSVExportArray);
-							fputcsv($CSVExportFile, $CSVExportArrayreturn);
+							if ($cloudsetting=="true") 
+								$CSVGC .= str_putcsv($CSVExportArrayreturn);
+							else
+								fputcsv($CSVExportFile, $CSVExportArrayreturn);
 						}
 
-						//Close CSV Export
-						fclose($CSVExportFile);
-
+						if ($cloudsetting=="true") {
+							// Write to GC storage
+							$storage = new StorageClient([
+								'projectId' => constant("GC_PROJECT")
+							]);	
+							$bucket = $storage->bucket(constant("GC_BUCKET"));
+					
+							$uploaddir = "private_html/Abre-Assessments/Exports/" . $UserEmail.csv;
+							$options = [
+								'resumable' => true,
+								'name' => $uploaddir,
+								'metadata' => [
+									'contentLanguage' => 'en'
+								]
+							];
+							$upload = $bucket->upload(
+								$CSVGC,
+								$options
+							);
+						}
+						else {
+							//Close CSV Export
+							fclose($CSVExportFile);
+						}
 					}
 
 					//View By Courses
@@ -212,9 +247,12 @@
 
 						//CSV Export Prepare
 						$CSVExportArray= array();
-						CSVExport();
+						if ($cloudsetting!="true") 
+							CSVExport();
 						$UserEmail=$_SESSION['useremail'];
-						$CSVExportFile = fopen(dirname(__FILE__) . "../../../../$portal_private_root/Abre-Assessments/Exports/$UserEmail.csv", 'w');
+						$CSVGC = "";
+						if ($cloudsetting!="true") 
+							$CSVExportFile = fopen(dirname(__FILE__) . "../../../../$portal_private_root/Abre-Assessments/Exports/$UserEmail.csv", 'w');
 
 						$CSVHeaderArray = array();
 						array_push($CSVHeaderArray, "Student", "StudentID", "Status");
@@ -226,7 +264,10 @@
 							array_push($CSVHeaderArray, "Question ".$i);
 						}
 						array_push($CSVHeaderArray, "IEP", "ELL", "Gifted", "Auto Points", "Rubric Points", "Score", "Percentage");
-						fputcsv($CSVExportFile, $CSVHeaderArray);
+						if ($cloudsetting=="true") 
+							$CSVGC .= str_putcsv($CSVHeaderArray);
+						else
+							fputcsv($CSVExportFile, $CSVHeaderArray);
 
 						while($row = $result->fetch_assoc())
 						{
@@ -245,12 +286,36 @@
 								$StudentStatusArray = GetAssessmentStatus($Assessment_ID);
 							}
 							$CSVExportArrayreturn = ShowAssessmentResults($Assessment_ID,$User,$StudentID,$ResultName,$IEP,$ELL,$Gifted,$questioncount,$owner,$totalstudents,$studentcounter,$totalresultsbystudentarray,$StudentScoresArray,$StudentStatusArray,$StudentsInClass,$QuestionDetails,$CSVExportArray);
-							fputcsv($CSVExportFile, $CSVExportArrayreturn);
+							if ($cloudsetting=="true") 
+								$CSVGC .= str_putcsv($CSVExportArrayreturn);
+							else
+								fputcsv($CSVExportFile, $CSVExportArrayreturn);
 						}
 
-						//Close CSV Export
-						fclose($CSVExportFile);
-
+						if ($cloudsetting=="true") {
+							// Write to GC storage
+							$storage = new StorageClient([
+								'projectId' => constant("GC_PROJECT")
+							]);	
+							$bucket = $storage->bucket(constant("GC_BUCKET"));
+					
+							$uploaddir = "private_html/Abre-Assessments/Exports/" . $UserEmail.csv;
+							$options = [
+								'resumable' => true,
+								'name' => $uploaddir,
+								'metadata' => [
+									'contentLanguage' => 'en'
+								]
+							];
+							$upload = $bucket->upload(
+								$CSVGC,
+								$options
+							);
+						}
+						else {
+							//Close CSV Export
+							fclose($CSVExportFile);
+						}
 					}
 
 					//View By Teacher
@@ -265,9 +330,12 @@
 
 						//CSV Export Prepare
 						$CSVExportArray= array();
-						CSVExport();
+						if ($cloudsetting!="true") 
+							CSVExport();
 						$UserEmail=$_SESSION['useremail'];
-						$CSVExportFile = fopen(dirname(__FILE__) . "../../../../$portal_private_root/Abre-Assessments/Exports/$UserEmail.csv", 'w');
+						$CSVGC = "";
+						if ($cloudsetting!="true") 
+							$CSVExportFile = fopen(dirname(__FILE__) . "../../../../$portal_private_root/Abre-Assessments/Exports/$UserEmail.csv", 'w');
 
 						$CSVHeaderArray = array();
 						array_push($CSVHeaderArray, "Student", "StudentID", "Status");
@@ -279,7 +347,10 @@
 							array_push($CSVHeaderArray, "Question ".$i);
 						}
 						array_push($CSVHeaderArray, "IEP", "ELL", "Gifted", "Auto Points", "Rubric Points", "Score", "Percentage");
-						fputcsv($CSVExportFile, $CSVHeaderArray);
+						if ($cloudsetting=="true") 
+							$CSVGC .= str_putcsv($CSVHeaderArray);
+						else
+							fputcsv($CSVExportFile, $CSVHeaderArray);
 
 						while($row = $result->fetch_assoc())
 						{
@@ -299,12 +370,36 @@
 								$StudentStatusArray = GetAssessmentStatus($Assessment_ID);
 							}
 							$CSVExportArrayreturn = ShowAssessmentResults($Assessment_ID,$User,$StudentID,$ResultName,$IEP,$ELL,$Gifted,$questioncount,$owner,$totalstudents,$studentcounter,$totalresultsbystudentarray,$StudentScoresArray,$StudentStatusArray,$StudentsInClass,$QuestionDetails,$CSVExportArray);
-							fputcsv($CSVExportFile, $CSVExportArrayreturn);
+							if ($cloudsetting=="true") 
+								$CSVGC .= str_putcsv($CSVExportArrayreturn);
+							else							
+								fputcsv($CSVExportFile, $CSVExportArrayreturn);
 						}
 
-						//Close CSV Export
-						fclose($CSVExportFile);
-
+						if ($cloudsetting=="true") {
+							// Write to GC storage
+							$storage = new StorageClient([
+								'projectId' => constant("GC_PROJECT")
+							]);	
+							$bucket = $storage->bucket(constant("GC_BUCKET"));
+					
+							$uploaddir = "private_html/Abre-Assessments/Exports/" . $UserEmail.csv;
+							$options = [
+								'resumable' => true,
+								'name' => $uploaddir,
+								'metadata' => [
+									'contentLanguage' => 'en'
+								]
+							];
+							$upload = $bucket->upload(
+								$CSVGC,
+								$options
+							);
+						}
+						else {
+							//Close CSV Export
+							fclose($CSVExportFile);
+						}
 					}
 
 					//View All
@@ -319,9 +414,12 @@
 
 						//CSV Export Prepare
 						$CSVExportArray= array();
-						CSVExport();
+						if ($cloudsetting!="true") 
+							CSVExport();
 						$UserEmail=$_SESSION['useremail'];
-						$CSVExportFile = fopen(dirname(__FILE__) . "../../../../$portal_private_root/Abre-Assessments/Exports/$UserEmail.csv", 'w');
+						$CSVGC = "";
+						if ($cloudsetting!="true") 
+							$CSVExportFile = fopen(dirname(__FILE__) . "../../../../$portal_private_root/Abre-Assessments/Exports/$UserEmail.csv", 'w');
 
 						$CSVHeaderArray = array();
 						array_push($CSVHeaderArray, "Student", "StudentID", "Status");
@@ -333,7 +431,10 @@
 							array_push($CSVHeaderArray, "Question ".$i);
 						}
 						array_push($CSVHeaderArray, "IEP", "ELL", "Gifted", "Auto Points", "Rubric Points", "Score", "Percentage");
-						fputcsv($CSVExportFile, $CSVHeaderArray);
+						if ($cloudsetting=="true") 
+							$CSVGC .= str_putcsv($CSVHeaderArray);
+						else
+							fputcsv($CSVExportFile, $CSVHeaderArray);
 
 						while($row = $result->fetch_assoc())
 						{
@@ -351,12 +452,36 @@
 								$StudentStatusArray = GetAssessmentStatus($Assessment_ID);
 							}
 							$CSVExportArrayreturn = ShowAssessmentResults($Assessment_ID,$User,$Student_ID,$ResultName,$IEP,$ELL,$Gifted,$questioncount,$owner,$totalstudents,$studentcounter,$totalresultsbystudentarray,$StudentScoresArray,$StudentStatusArray,$StudentsInClass,$QuestionDetails,$CSVExportArray);
-							fputcsv($CSVExportFile, $CSVExportArrayreturn);
+							if ($cloudsetting=="true") 
+								$CSVGC .= str_putcsv($CSVExportArrayreturn);
+							else
+								fputcsv($CSVExportFile, $CSVExportArrayreturn);
 						}
 
-						//Close CSV Export
-						fclose($CSVExportFile);
-
+						if ($cloudsetting=="true") {
+							// Write to GC storage
+							$storage = new StorageClient([
+								'projectId' => constant("GC_PROJECT")
+							]);	
+							$bucket = $storage->bucket(constant("GC_BUCKET"));
+					
+							$uploaddir = "private_html/Abre-Assessments/Exports/" . $UserEmail.csv;
+							$options = [
+								'resumable' => true,
+								'name' => $uploaddir,
+								'metadata' => [
+									'contentLanguage' => 'en'
+								]
+							];
+							$upload = $bucket->upload(
+								$CSVGC,
+								$options
+							);
+						}
+						else {
+							//Close CSV Export
+							fclose($CSVExportFile);
+						}
 					}
 
 			echo "</table>";

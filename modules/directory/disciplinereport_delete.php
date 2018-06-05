@@ -21,6 +21,11 @@
 	require_once(dirname(__FILE__) . '/../../core/abre_verification.php');
 	require_once('permissions.php');
 
+	$cloudsetting=constant("USE_GOOGLE_CLOUD");
+	if ($cloudsetting=="true") 
+		require(dirname(__FILE__). '/../../vendor/autoload.php');
+	use Google\Cloud\Storage\StorageClient;
+
 	//Delete the User
 	if($pageaccess == 1){
 
@@ -33,8 +38,20 @@
 		while($row = $result->fetch_assoc()){
 			$filename = htmlspecialchars($row["Filename"], ENT_QUOTES);
 			if($filename != ""){
-				$filename = dirname(__FILE__) . "/../../../$portal_private_root/directory/discipline/" . $filename;
-				unlink($filename);
+				if ($cloudsetting=="true") {
+					$storage = new StorageClient([
+						'projectId' => constant("GC_PROJECT")
+					]);	
+					$bucket = $storage->bucket(constant("GC_BUCKET"));			
+
+					$cloud_dir = "private_html/directory/discipline/" . $filename;
+					$object = $bucket->object($cloud_dir);
+					$object->delete();
+				}
+				else {
+					$filename = dirname(__FILE__) . "/../../../$portal_private_root/directory/discipline/" . $filename;
+					unlink($filename);	
+				}
 			}
 		}
 

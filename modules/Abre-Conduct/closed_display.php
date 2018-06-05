@@ -22,27 +22,32 @@
 	require(dirname(__FILE__) . '/../../core/abre_dbconnect.php');
 	require_once(dirname(__FILE__) . '/../../core/abre_functions.php');
 	require_once('functions.php');
-	//Filter admin results by access buildings
-	$query = "SELECT SchoolCode FROM Abre_Staff WHERE EMail1='".$_SESSION['useremail']."'";
-	$dbreturn = databasequery($query);
-	$buildingfilter = "SchoolCode=''";
-	foreach ($dbreturn as $value)
-	{
-		$AdminSchoolCode = htmlspecialchars($value["SchoolCode"], ENT_QUOTES);
-		$buildingfilter = "$buildingfilter OR  SchoolCode='$AdminSchoolCode'";
+
+
+	if(admin()){
+		$schoolCodes = getAllSchoolCodes();
+		$buildingfilter = "";
+		foreach($schoolCodes as $code){
+			$buildingfilter = $buildingfilter."SchoolCode = '$code' OR ";
+		}
+		$buildingfilter = rtrim($buildingfilter, " OR ");
+	}else{
+		//Filter admin results by access buildings
+		$query = "SELECT SchoolCode FROM Abre_Staff where EMail1 = '".$_SESSION['useremail']."'";
+		$dbreturn = databasequery($query);
+		$buildingfilter = "SchoolCode = ''";
+		foreach ($dbreturn as $value){
+			$AdminSchoolCode = htmlspecialchars($value["SchoolCode"], ENT_QUOTES);
+			$buildingfilter = "$buildingfilter OR SchoolCode = '$AdminSchoolCode'";
+		}
 	}
-	if(admin())
-	{
-		$buildingfilter = "SchoolCode='' OR  SchoolCode = 'HA' OR  SchoolCode = 'HABP' OR  SchoolCode = 'HABW' OR  SchoolCode = 'HACW' OR  SchoolCode = 'HAFS' OR  SchoolCode = 'HAFW' OR  SchoolCode = 'HAGA' OR  SchoolCode = 'HAHL' OR  SchoolCode = 'HAHS' OR  SchoolCode = 'HALN' OR  SchoolCode = 'HARV' OR  SchoolCode = 'HARW' OR  SchoolCode = 'HAWI'";
-	}
-	if(admin() or conductAdminCheck($_SESSION['useremail']))
-	{
+
+	if(admin() || conductAdminCheck($_SESSION['useremail'])){
 		$useremailaccess = "";
-	}
-	else
-	{
+	}else{
 		$useremailaccess = "and Owner='".$_SESSION['useremail']."'";
 	}
+	
 	if(isset($_POST["conductsearch"])){ $ConductSearch = mysqli_real_escape_string($db, $_POST["conductsearch"]); }else{ $ConductSearch = ""; }
 	if(isset($_POST["conductfrom"])){ $ConductFrom = mysqli_real_escape_string($db, $_POST["conductfrom"]); $ConductFrom = str_replace('/', '-', $ConductFrom); }else{ $ConductFrom=""; }
 	if(isset($_POST["conductthru"])){ $ConductThur = mysqli_real_escape_string($db, $_POST["conductthru"]); $ConductThur = str_replace('/', '-', $ConductThur); }else{ $ConductThur=""; }

@@ -38,7 +38,6 @@
 
 	//Send client requests
 	$Service_Oauth2 = new Google_Service_Oauth2($client);
-	$Service_Plus = new Google_Service_Plus($client);
 	$Service_Gmail = new Google_Service_Gmail($client);
 	$Service_Drive = new Google_Service_Drive($client);
 	$Service_Calendar = new Google_Service_Calendar($client);

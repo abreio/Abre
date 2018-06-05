@@ -21,6 +21,7 @@
 	require_once(dirname(__FILE__) . '/../../core/abre_verification.php');
 	require(dirname(__FILE__) . '/../../core/abre_dbconnect.php');
 	require_once('../../core/abre_functions.php');
+	require_once('functions.php');
 	require_once('permissions.php');
 
 	if($pagerestrictions=="")
@@ -86,11 +87,11 @@
 														echo "<li class='mdl-menu__item copystudentlink' data-clipboard-text='$Student_Link'><a href='#' class='mdl-color-text--black' style='font-weight:400'>Give</a></li>";
 														echo "<li class='mdl-menu__item mdl-menu__item--full-bleed-divider'><a href='#assessments/results/$Assessment_ID' class='mdl-color-text--black' style='font-weight:400'>Results</a></li>";
 													}
-													if((admin() or $SharedEditable==1) or $Verified==0)
+													if(($SharedEditable==1 || admin() || isAssessmentAdministrator()) || $Verified==0)
 													{
 														echo "<li class='mdl-menu__item exploreassessment'><a href='#assessments/$Assessment_ID' class='mdl-color-text--black' style='font-weight:400'>Edit</a></li>";
 													}
-													if($Verified==0 or admin())
+													if($Verified==0 || admin() || isAssessmentAdministrator())
 													{
 														echo "<li class='mdl-menu__item duplicateassessment' data-assessmentid='$Assessment_ID'>Make a Copy</a></li>";
 													}
@@ -103,7 +104,7 @@
 														$resultquestioncount = $db->query($sqlquestion);
 														$returnrow = $resultquestioncount->fetch_assoc();
 														$rowcountresultquestioncount = $returnrow["COUNT(*)"];
-														if($Verified==0 or ($Verified!=0 && $rowcountresultquestioncount==0) or admin())
+														if($Verified==0 or ($Verified!=0 && $rowcountresultquestioncount==0) || admin() || isAssessmentAdministrator())
 														{
 															echo "<li class='mdl-menu__item deleteassessment'><a href='modules/".basename(__DIR__)."/assessment_delete.php?assessmentid=".$Assessment_ID."' class='mdl-color-text--black' style='font-weight:400'>Delete</a></li>";
 														}
@@ -174,12 +175,12 @@
 			if(Assessment_Verified=='1')
 			{
 				$(".modal-content #assessment_verified").prop('checked',true);
-				<?php if(!admin()){ ?> $(".advancedsettings").css("display", "none"); $(".modal-content #assessment_verified").val(Assessment_Verified); <?php } ?>
+				<?php if(!admin() && !isAssessmentAdministrator()){ ?> $(".advancedsettings").css("display", "none"); $(".modal-content #assessment_verified").val(Assessment_Verified); <?php } ?>
 			}
 			else
 			{
 				$(".modal-content #assessment_verified").prop('checked',false);
-				<?php if(!admin()){ ?> $(".advancedsettings").css("display", "block"); $(".modal-content #assessment_verified").val(Assessment_Verified); <?php } ?>
+				<?php if(!admin() && !isAssessmentAdministrator()){ ?> $(".advancedsettings").css("display", "block"); $(".modal-content #assessment_verified").val(Assessment_Verified); <?php } ?>
 			}
 			var Assessment_shared = $(this).data('shared');
 			if(Assessment_shared=='1')

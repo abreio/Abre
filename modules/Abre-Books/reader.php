@@ -71,6 +71,8 @@
 	{
 			$access=1;
 			echo "<script src='modules/".basename(__DIR__)."/js/epub.0.2.15.min.js'></script>";
+
+			echo "<script src='modules/".basename(__DIR__)."/js/zip.min.js'></script>";
 			?>
 
 			<div id="main">
@@ -102,7 +104,15 @@
 				$(function()
 				{
 					<?php
-						echo "var Book = ePub('/content/books/$bookslug/');";
+						$cloudsetting=constant("USE_GOOGLE_CLOUD");
+						if ($cloudsetting=="true") {
+							$bucket = constant("GC_BUCKET");
+							echo "var epubbook = 'https://storage.googleapis.com/$bucket/private_html/books/$bookslug.epub';";
+							echo "var Book = ePub(epubbook);";
+						}
+						else {
+							echo "var Book = ePub('/content/books/$bookslug/');";
+						}
 					?>
 					Book.renderTo("viewer");
 

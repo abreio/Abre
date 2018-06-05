@@ -103,7 +103,7 @@
 
 			echo "<tr class='courserow pointer'>";
 				echo "<td class='hide-on-med-and-down explorecourse' data-href='#curriculum/0/$Course_ID'>";
-					echo "<img src='$portal_root/modules/".basename(__DIR__)."/images/$Image' class='profile-avatar-small'>";
+					echo "<img src='$portal_root/modules/".basename(__DIR__)."/images/$Image' class='profile-avatar-small' style='object-fit:cover;'>";
 					echo "</td>";
 					echo "<td class='explorecourse' data-href='#curriculum/0/$Course_ID'>$Title</td>";
 					echo "<td class='hide-on-med-and-down explorecourse' data-href='#curriculum/0/$Course_ID'>$Subject</td>";

@@ -134,7 +134,7 @@
 			update: function(event, ui){
 				var postData = $(this).sortable('serialize', {expression: /(.+)[=_](.+)/});
 				<?php
-					echo "$.post('$portal_root/modules/stream/save_widget_order.php', {list: postData})";
+					echo "$.post('$portal_root/modules/stream/action_save_widget_order.php', {list: postData})";
 				?>
 			}
 		});
@@ -173,7 +173,7 @@
 			}
 
 			//Save open status to server
-			$.post("/modules/stream/save_widget_state.php", {widget: Widget, status: OpenStatus});
+			$.post("/modules/stream/action_save_widget_state.php", {widget: Widget, status: OpenStatus});
 
 		});
 

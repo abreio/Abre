@@ -29,18 +29,18 @@
 				document.title = 'Stream';
 				$('#modal_holder').load( 'modules/stream/modals.php', function()
 				{
-					$('#content_holder').load( 'modules/stream/home.php', function()
+					$('#content_holder').load( 'modules/stream/view_home.php', function()
 					{
 						init_page();
 					});
 				});
-				
-				
+
+
 				$( '#navigation_top' ).show();
-				$( '#navigation_top' ).load( 'modules/stream/menu.php', function() {
+				$( '#navigation_top' ).load( 'modules/stream/view_menu.php', function() {
 					$( '#navigation_top' ).show();
 				});
-				
+
 			},";
 
 ?>

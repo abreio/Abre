@@ -22,24 +22,24 @@
 	require(dirname(__FILE__) . '/../../core/abre_dbconnect.php');
 
 	$cloudsetting=constant("USE_GOOGLE_CLOUD");
-	if ($cloudsetting=="true") 
+	if ($cloudsetting=="true")
 		require(dirname(__FILE__). '/../../vendor/autoload.php');
 	use Google\Cloud\Storage\StorageClient;
-	
+
 	//Check for feed image
 	if($image != ""){
 
 		$storage = new StorageClient([
 			'projectId' => constant("GC_PROJECT")
-		]);	
-		$bucket = $storage->bucket(constant("GC_BUCKET"));	
-			
+		]);
+		$bucket = $storage->bucket(constant("GC_BUCKET"));
+
 		//Determine if Custom or Feed Post
 		if ($type=="custom"){
 			$cloud_file = "private_html/stream/cache/images/$image";
 			if ($bucket->object($cloud_file)->exists()){
 				$fileExtension = pathinfo($image, PATHINFO_EXTENSION);
-				$image = $portal_root."/modules/stream/stream_serve_image.php?file=$cloud_file&ext=$fileExtension";
+				$image = $portal_root."/modules/stream/view_serve_image.php?file=$cloud_file&ext=$fileExtension";
 			}
 			else
 			{
@@ -51,7 +51,7 @@
 			//Make sure image is over http or https
 			$url = parse_url($image);
 			if($url['scheme'] == 'https' xor $url['scheme'] == 'http'){
-	
+
 				//Get the name and sanitize the file name
 				$fileExtension = pathinfo($image, PATHINFO_EXTENSION);
 				$fileExtension = substr($fileExtension, 0, 3);
@@ -69,13 +69,13 @@
 				// Not using bucket exists for performance reasons
 				//if ($bucket->object($cloud_file)->exists()){
 				if ($stream_exists > 0) {
-					$image = $portal_root."/modules/stream/stream_serve_image.php?file=$cloud_file&image=$imagefile&ext=$fileExtension";
+					$image = $portal_root."/modules/stream/view_serve_image.php?file=$cloud_file&image=$imagefile&ext=$fileExtension";
 					/*
 					$info = $bucket->object($cloud_file)->info();
 					if ($info['size'] < 1000) {
-						$image = "";						
+						$image = "";
 					}
-					*/	
+					*/
 				}else{
 					//Check for 404 and 403 errors
 					$file_headers = @get_headers($image);
@@ -112,20 +112,20 @@
 								$picture,
 								$options
 							);
-																				
+
 							$stmt = $db->stmt_init();
 							$sql = "INSERT INTO streams_cache (link) VALUES (?)";
 							$stmt->prepare($sql);
 							$stmt->bind_param("s", $imagefile);
 							$stmt->execute();
-							$stmt->close();						
-					
+							$stmt->close();
+
 						}else{
 							$image = "";
 						}
 					}
 				}
-			}			
+			}
 		}
 	}
 ?>

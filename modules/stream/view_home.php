@@ -29,12 +29,12 @@
 		echo "<div id='streamstream'>";
 
 			//Display Stream Buttons
-			require('stream_navigation.php');
+			require('view_navigation.php');
 
 			//Display Stream
 			echo "<div id='streamcards'>";
 
-				require('stream_announcements.php');
+				require('view_stream_announcements.php');
 
 			echo "</div>";
 
@@ -52,12 +52,12 @@
 		echo "<div id='streamwidgets'>";
 
 			//Display Widgets
-			require('widgets.php');
+			require('view_widgets.php');
 
 		echo "</div>";
 
 		if(admin() || AdminCheck($_SESSION['useremail']) || isStreamHeadlineAdministrator()){
-			require "stream_fab.php";
+			require "view_stream_fab.php";
 		}
 
 	echo "</div>";
@@ -77,7 +77,7 @@
 		//Paging function
 		function streamPaging(start,end){
 
-			$.get('modules/stream/stream_'+Page+'.php?StreamStartResult='+start+'&StreamEndResult='+end, function(results){
+			$.get('modules/stream/view_stream_'+Page+'.php?StreamStartResult='+start+'&StreamEndResult='+end, function(results){
 				$('#showmorestream').hide();
 			    $('#streamcards').append(results);
 			});
@@ -111,46 +111,39 @@
 
 			$('#news, #likes, #comments, #announcements').prop("disabled", false);
 			$('#streamnavigationloader').show();
-			$.get('modules/stream/stream_'+Page+'.php?StreamStartResult='+StreamStart+'&StreamEndResult='+StreamEnd, function(results){
+			$.get('modules/stream/view_stream_'+Page+'.php?StreamStartResult='+StreamStart+'&StreamEndResult='+StreamEnd, function(results){
 				$('#streamnavigationloader').hide();
 			    $('#streamcards').html(results);
 			});
 
 		}
 
-		//View All Streams
+		//View News
 		$( "#news" ).unbind().click(function(){
-			pageChange("all");
-			Page = "all";
+			pageChange("news");
+			Page = "news";
 			$("#news").attr( "disabled", "disabled" );
-
 		});
 
 		//View Likes
 		$("#likes").unbind().click(function(){
-
 			pageChange("likes");
 			Page = "likes";
 			$("#likes").attr( "disabled", "disabled" );
-
 		});
 
-		//View Likes
+		//View Comments
 		$("#comments").unbind().click(function(){
-
 			pageChange("comments");
 			Page = "comments";
 			$("#comments").attr( "disabled", "disabled" );
-
 		});
 
-		//View Likes
+		//View Announcements
 		$("#announcements").unbind().click(function(){
-
 			pageChange("announcements");
 			Page = "announcements";
 			$("#announcements").attr( "disabled", "disabled" );
-
 		});
 
 		//Scroll to Top Functionality

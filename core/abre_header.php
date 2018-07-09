@@ -79,7 +79,7 @@
 				<script src='https://www.gstatic.com/charts/loader.js'></script>
 				<script src='core/js/chart.2.7.0.min.js'></script>
 				<script src='core/js/chartjs-plugin-datalabels.min.js'></script>
-				
+
 			</head>
 			<body>
 			<script>google.charts.load('current', {'packages':['corechart']});</script>

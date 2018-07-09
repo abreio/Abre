@@ -27,22 +27,26 @@
 			echo "<div class='col l9 m9 s12'>";
 				echo "<div class='streamnavholder'>";
 					echo "<button class='mdl-button mdl-js-button mdl-js-ripple-effect' id='announcements' style='padding: 0px 9px;' disabled>";
-					echo "<i class='material-icons' style='font-size:16px; padding:0 4px 2px 0;'>announcement</i><span class='hide-on-med-and-down'>Announcements</span></button>";
+					echo "<i class='material-icons hide-on-large-only' style='font-size:16px; padding:0 4px 2px 0;'>announcement</i><span class='hide-on-med-and-down'>Announcements</span></button>";
 				echo "</div>";
 				echo "<div class='streamnavholder'>";
 					echo "<button class='mdl-button mdl-js-button mdl-js-ripple-effect' id='news' style='padding: 0px 9px;'>";
-					echo "<i class='material-icons' style='font-size:16px; padding:0 4px 2px 0;'>dashboard</i><span class='hide-on-med-and-down'>News</span></button>";
+					echo "<i class='material-icons hide-on-large-only' style='font-size:16px; padding:0 4px 2px 0;'>dashboard</i><span class='hide-on-med-and-down'>News</span></button>";
 				echo "</div>";
 				if($_SESSION['usertype'] == "staff"){
 					echo "<div class='streamnavholder'>";
 						echo "<button class='mdl-button mdl-js-button mdl-js-ripple-effect' id='likes' style='padding: 0px 9px;'>";
-						echo "<i class='material-icons' style='font-size:16px; padding:0 4px 2px 0;'>favorite</i><span class='hide-on-med-and-down'>Likes</span></button>";
+						echo "<i class='material-icons hide-on-large-only' style='font-size:16px; padding:0 4px 2px 0;'>favorite</i><span class='hide-on-med-and-down'>Likes</span></button>";
 					echo "</div>";
 					echo "<div class='streamnavholder'>";
 						echo "<button class='mdl-button mdl-js-button mdl-js-ripple-effect' id='comments' style='padding: 0px 9px;'>";
-						echo "<i class='material-icons' style='font-size:16px; padding:0 4px 2px 0;'>comment</i><span class='hide-on-med-and-down'>Comments</span></button>";
+						echo "<i class='material-icons hide-on-large-only' style='font-size:16px; padding:0 4px 2px 0;'>comment</i><span class='hide-on-med-and-down'>Comments</span></button>";
 					echo "</div>";
 				}
+				echo "<div class='streamnavholder'>";
+					echo "<a href='#profile' class='mdl-button mdl-js-button mdl-js-ripple-effect hide-on-med-and-up' style='padding: 0px 9px;'>";
+					echo "<i class='material-icons' style='font-size:16px; padding:0 4px 2px 0;'>person</i></a>";
+				echo "</div>";
 			echo "</div>";
 			echo "<div class='col l3 m3 hide-on-small-only' style='text-align:right;'>";
 				echo "<a class='mdl-button mdl-js-button mdl-js-ripple-effect' href='#profile'>Streams</a>";

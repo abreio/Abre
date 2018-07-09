@@ -60,8 +60,8 @@
 	 	</div>
 
 	 	<!-- Stream Announcement -->
-		<div id="streampost" class="modal modal-fixed-footer modal-mobile-full">
-			<form id="form-streampost" method="post" enctype='multipart/form-data' action="modules/stream/save_announcement.php">
+		<div id="streampost" class="fullmodal modal modal-fixed-footer modal-mobile-full" style='max-width:800px;'>
+			<form id="form-streampost" method="post" enctype='multipart/form-data' action="modules/stream/action_save_announcement.php">
 				<div class="modal-content" style="padding: 0px !important;">
 					<div class="row" style='background-color: <?php echo getSiteColor(); ?>; padding: 24px;'>
 						<div class='col s11'><span class="truncate" style="color: #fff; font-weight: 500; font-size: 24px; line-height: 26px;">New Announcement</span></div>
@@ -87,7 +87,7 @@
 						</div>
 						<div class="row">
 							<div class="input-field col s12">
-								<input type="text" name="post_title" id="post_title" autocomplete="off" placeholder="Enter an announcement title" required>
+								<input type="text" name="post_title" id="post_title" autocomplete="off" placeholder="Enter Announcement Title" required>
 								<label for="post_title" class="active">Title</label>
 							</div>
 						</div>
@@ -122,9 +122,9 @@
 	?>
 
 	<!-- Read and Comment Modal -->
-	<div id="addstreamcomment" class="modal modal-fixed-footer modal-mobile-full">
+	<div id="addstreamcomment" class="fullmodal modal modal-fixed-footer modal-mobile-full" style='max-width:700px;'>
 		<div id="commentloader" class="mdl-progress mdl-js-progress mdl-progress__indeterminate" style="width:100%"></div>
-		<form id="form-addstreamcomment" method="post" action="modules/stream/comment_add.php">
+		<form id="form-addstreamcomment" method="post" action="modules/stream/action_comment_add.php">
 			<div class="modal-content" id="modal-content-section" style="padding: 0px !important;">
 				<div class="row" style='background-color: <?php echo getSiteColor(); ?>; padding: 24px;'>
 					<div class='col s11'><span class="truncate" id='readStreamTitle' style="color: #fff; font-weight: 500; font-size: 24px; line-height: 26px;"></span></div>
@@ -327,8 +327,8 @@
 
         	selectedWidgets = selectedWidgets.replace(/^,|,$/g,'');
 
-			$.post("modules/stream/save_widget_visibility.php", {widgets: selectedWidgets}, function() {
-				$("#streamwidgets").load("modules/<?php echo basename(__DIR__); ?>/widgets.php");
+			$.post("modules/stream/action_save_widget_visibility.php", {widgets: selectedWidgets}, function() {
+				$("#streamwidgets").load("modules/<?php echo basename(__DIR__); ?>/view_widgets.php");
 			});
 
 		});
@@ -349,13 +349,13 @@
 			})
 			//Show the notification
 			.done(function(response) {
-				$( "#streamComments" ).load( "modules/stream/comment_list.php?url="+response, function() {
+				$( "#streamComments" ).load( "modules/stream/view_comment_list.php?url="+response, function() {
 					$("textarea").val('');
 					$("#commentstatustext").text("Write a comment");
 					$(".modal-content #streamUrl").val(response);
 					var element = document.getElementById("commentthreadbox");
 					element.scrollTop = element.scrollHeight;
-					$.post( "modules/<?php echo basename(__DIR__); ?>/update_card.php", {url: url, redirect: redirect, type: "comment"})
+					$.post( "modules/<?php echo basename(__DIR__); ?>/action_update_card.php", {url: url, redirect: redirect, type: "comment"})
 					.done(function(data) {
 						$("#"+id).prev().removeClass("mdl-color-text--grey-600");
 						$("#"+id).prev().css("color", "<?php echo getSiteColor(); ?>");

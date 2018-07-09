@@ -77,82 +77,7 @@
 			$num_rows_like = $result['counts']['likes'];
 			$num_rows_comment = $result['counts']['comments'];
 
-			//Display Card
-			echo "<div class='mdl-card mdl-shadow--2dp card_stream hoverable' style='float:left;'>";
-
-				//Feed
-				echo "<div class='truncate' style='padding:16px 16px 0 16px; font-size: 12px; color: #999; font-weight: 500;'>You Added a Comment</div>";
-
-				//Title
-				echo "<div class='cardtitle' style='height:60px; padding:5px 16px 0 16px;'>";
-					echo "<div class='mdl-card__title-text ellipsis-multiline modal-readstream pointer' data-excerpt='$rawexcerpt' data-image='$imagebase' data-redirect='comments' data-title='$titleencoded' data-url='$linkbase' data-type='$type' style='font-weight:700; font-size:20px; line-height:24px;'>$titlewithoutlongwords</div>";
-				echo "</div>";
-
-				//Date
-				echo "<div class='truncate' style='padding:0 16px 10px 16px; font-size: 14px; color: #9E9E9E;'>$creationtime</div>";
-
-				//Card Image
-				if($image != ""){
-					echo "<div class='mdl-card__media mdl-color--grey-100 mdl-card--expand modal-readstream pointer' data-excerpt='$rawexcerpt' data-image='$imagebase' data-redirect='comments' data-title='$titleencoded' data-url='$linkbase' data-type='$type' style='height:200px; background-image: url($image);'></div>";
-				}
-				else
-				{
-					if($excerpt == ""){
-						$excerpt = $title;
-					}
-					if(strlen($excerpt) > 100){
-						$body = substr($excerpt, 0, strrpos( substr($excerpt , 0, 100), ' ' ));
-						$body = substr($excerpt, 0, 97) . ' ...';
-					}
-					else
-					{
-						$body = $excerpt;
-					}
-
-					echo "<div class='mdl-card__media mdl-color--grey-100 mdl-card--expand valign-wrapper modal-readstream pointer' data-excerpt='$rawexcerpt' data-image='$imagebase' data-redirect='comments' data-title='$titleencoded' data-url='$linkbase' data-type='$type' style='height:200px; background-image: url(/core/images/abre/abre_pattern.png); background-color: ".getSiteColor()." !important; overflow:hidden;'>";
-						echo "<span class='wrap-links' style='width:100%; color:#fff; padding:32px; font-size:18px; line-height:normal; font-weight:700; text-align:center;'>$body</span>";
-					echo "</div>";
-
-				}
-
-				//Card Actions
-				echo "<div class='mdl-card__actions'>";
-
-					//Read Button
-					echo "<a class='mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect modal-readstream' data-excerpt='$rawexcerpt' data-image='$imagebase' data-redirect='comments' data-title='$titleencoded' data-url='$linkbase' data-type='$type' style='color: ".getSiteColor()."'>Read</a>";
-
-					//Share, Likes, Comments for Staff Only
-					if($_SESSION['usertype'] == 'staff'){
-
-						echo "<div class='mdl-layout-spacer'></div>";
-
-						//Share
-						if(!is_numeric($link)){
-							echo "<a class='material-icons mdl-color-text--grey-600 modal-sharecard commenticon shareinfo' style='margin-right:30px;' data-url='$linkbase' title='Share' href='#sharecard'>share</a>";
-						}
-
-						//Likes
-						if($num_rows_like == 0){
-							echo "<a class='material-icons mdl-color-text--grey-600 likeicon' data-title='$titleencoded' data-excerpt='$rawexcerpt' data-url='$linkbase' data-image='$imagebase' data-type='$type' title='Like' href='#'>favorite</a> <span class='mdl-color-text--grey-600' style='font-size:12px; font-weight:600; width:30px; padding-left:5px;'>$num_rows_like</span>";
-						}else{
-							if($num_rows_like_current_user == 0){
-								echo "<a class='material-icons mdl-color-text--grey-600 likeicon' data-title='$titleencoded' data-excerpt='$rawexcerpt' data-url='$linkbase' data-image='$imagebase' data-type='$type' href='#'>favorite</a> <span class='mdl-color-text--grey-600' style='font-size:12px; font-weight:600; width:30px; padding-left:5px;'>$num_rows_like</span>";
-							}else{
-								echo "<a class='material-icons mdl-color-text--red likeicon' data-title='$titleencoded' data-excerpt='$rawexcerpt' data-url='$linkbase' data-image='$imagebase' data-type='$type' href='#'>favorite</a> <span class='mdl-color-text--red' style='font-size:12px; font-weight:600; width:30px; padding-left:5px;'>$num_rows_like</span>";
-							}
-						}
-
-						//Comments
-						if($num_rows_comment == 0){
-							echo "<a class='material-icons mdl-color-text--grey-600 modal-addstreamcomment commenticon' data-commenticonid='comment_$counter' data-excerpt='$rawexcerpt' data-image='$imagebase' data-redirect='comments' data-title='$titleencoded' data-url='$linkbase' data-type='$type' title='Add a comment' href='#addstreamcomment'>insert_comment</a><span id='comment_$counter' style='font-size:12px; font-weight:600; width:30px; padding-left:5px; color:grey'>$num_rows_comment</span>";
-						}else{
-							echo "<a class='material-icons modal-addstreamcomment commenticon' style='color: ".getSiteColor().";' data-commenticonid='comment_$counter' data-excerpt='$rawexcerpt' data-image='$imagebase' data-redirect='comments' data-title='$titleencoded' data-url='$linkbase' data-type='$type' title='Add a comment' href='#addstreamcomment'>insert_comment</a> <span id='comment_$counter' style='font-size:12px; font-weight:600; width:30px; padding-left:5px; color: ".getSiteColor()."'>$num_rows_comment</span>";
-						}
-					}
-
-				echo "</div>";
-
-			echo "</div>";
+			DisplayCard($id,$type,$color,$owner,$feedtitle,$title,$image,$date,$rawexcerpt,$excerpt,$linkraw,$link,$num_rows_like,$num_rows_comment,$cardcountloop);
 
 		}
 	}
@@ -341,9 +266,9 @@
 			var elementCount = $(this).next();
 			var elementIcon = $(this);
 
-			$.post("modules/stream/stream_like.php", { url: Stream_Url, title: Stream_Title, image: Stream_Image, excerpt: excerpt })
+			$.post("modules/stream/view_stream_like.php", { url: Stream_Url, title: Stream_Title, image: Stream_Image, excerpt: excerpt })
 			.done(function(data) {
-				$.post( "modules/<?php echo basename(__DIR__); ?>/update_card.php", {url: Stream_Url, type: "like"})
+				$.post( "modules/<?php echo basename(__DIR__); ?>/action_update_card.php", {url: Stream_Url, type: "like"})
 				.done(function(data) {
 					if(data.count == 0){
 						elementIcon.addClass("mdl-color-text--grey-600");
@@ -426,7 +351,7 @@
 			if(streamImage != ""){
 				$(".modal-content #streamPhotoHolder").show();
 				$(".modal-content #streamPhoto").addClass("mdl-card__media");
-				$(".modal-content #streamPhoto").attr('style', 'height:200px;');
+				$(".modal-content #streamPhoto").attr('style', 'height:300px;');
 				$(".modal-content #streamPhoto").css("background-image", "url("+atob(streamImage)+")");
 			}else{
 				$(".modal-content #streamPhotoHolder").hide();
@@ -441,7 +366,7 @@
 				$(".modal-content #streamLink").attr("href", atob(Stream_Url));
 			}
 
-			$( "#streamComments" ).load( "modules/stream/comment_list.php?url="+Stream_Url, function() {
+			$( "#streamComments" ).load( "modules/stream/view_comment_list.php?url="+Stream_Url, function() {
 				$("#commentloader").hide();
 			});
 
@@ -487,7 +412,7 @@
 			if(streamImage != ""){
 				$(".modal-content #streamPhotoHolder").show();
 				$(".modal-content #streamPhoto").addClass("mdl-card__media");
-				$(".modal-content #streamPhoto").attr('style', 'height:200px;');
+				$(".modal-content #streamPhoto").attr('style', 'height:300px;');
 				$(".modal-content #streamPhoto").css("background-image", "url("+atob(streamImage)+")");
 			}else{
 				$(".modal-content #streamPhotoHolder").hide();
@@ -502,7 +427,7 @@
 				$(".modal-content #streamLink").attr("href", atob(Stream_Url));
 			}
 
-			$( "#streamComments" ).load( "modules/stream/comment_list.php?url="+Stream_Url, function() {
+			$( "#streamComments" ).load( "modules/stream/view_comment_list.php?url="+Stream_Url, function() {
 				$("#commentloader").hide();
 			});
 

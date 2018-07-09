@@ -22,14 +22,14 @@
 
 	//Check for feed image
 	if($image != ""){
-		
+
 		//Determine if Custom or Feed Post
 		if ($type=="custom"){
-			
+
 			$filename = $portal_path_root . "/../$portal_private_root/stream/cache/images/" .$image;
 			if (file_exists($filename)){
 				$fileExtension = pathinfo($filename, PATHINFO_EXTENSION);
-				$image = $portal_root."/modules/stream/stream_serve_image.php?file=$image&ext=$fileExtension";
+				$image = $portal_root."/modules/stream/view_serve_image.php?file=$image&ext=$fileExtension";
 			}
 			else
 			{
@@ -41,18 +41,18 @@
 			//Make sure image is over http or https
 			$url = parse_url($image);
 			if($url['scheme'] == 'https' xor $url['scheme'] == 'http'){
-	
+
 				//Get the name and sanatize the file name
 				$fileExtension = pathinfo($image, PATHINFO_EXTENSION);
 				$fileExtension = substr($fileExtension, 0, 3);
 				if($fileExtension == "jpe"){ $fileExtension="jpeg"; }
 				$imagefile = $date."_rss.$fileExtension";
 				$filename = $portal_path_root . "/../$portal_private_root/stream/cache/images/$imagefile";
-	
+
 				//If it already saved, read from local server
 				if (file_exists($filename)){
 
-					$image = $portal_root."/modules/stream/stream_serve_image.php?file=$imagefile&ext=$fileExtension";
+					$image = $portal_root."/modules/stream/view_serve_image.php?file=$imagefile&ext=$fileExtension";
 					if(filesize($filename) < 1000){
 						$image = "";
 					}
@@ -65,7 +65,7 @@
 					}else{
 						//Make sure file is an image
 						if(@exif_imagetype($image)){
-							
+
 							//Save image to server
 							$fileExtension = pathinfo($image, PATHINFO_EXTENSION);
 							$local_file = $portal_path_root . "/../$portal_private_root/stream/cache/images/$imagefile";
@@ -80,17 +80,17 @@
 							curl_exec($ch);
 							curl_close($ch);
 							fclose($fp);
-							
+
 							//Resize image
 							ResizeImage($local_file, "1000", "90");
-							
+
 						}else{
 							$image = "";
 						}
 					}
 				}
 			}
-			
+
 		}
 	}
 

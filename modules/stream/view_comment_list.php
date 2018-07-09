@@ -141,11 +141,11 @@
 					var CommentID = $(this).data('commentid');
 					$.ajax({
 						type: 'POST',
-						url: 'modules/stream/comment_remove.php?commentid='+CommentID,
+						url: 'modules/stream/action_comment_remove.php?commentid='+CommentID,
 						data: '',
 					})
 					.done(function() {
-						$.post( "modules/<?php echo basename(__DIR__); ?>/update_card.php", {url: url, redirect: redirect, type: "comment"})
+						$.post( "modules/<?php echo basename(__DIR__); ?>/action_update_card.php", {url: url, redirect: redirect, type: "comment"})
 						.done(function(data) {
 							if(data.count == 0){
 								$("#"+id).prev().addClass("mdl-color-text--grey-600");

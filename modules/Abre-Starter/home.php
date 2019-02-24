@@ -26,7 +26,7 @@
 <div class='page_container mdl-shadow--4dp'>
 	<div class='page'>
 		<div class='row'>
-			<div style='padding:56px; text-align:center; width:100%;'><span style='font-size: 22px; font-weight:700'>Hello World</span><br><p style='font-size:16px; margin:20px 0 0 0;'>This is a simple app format for creating Abre Apps! Click <a href='#starter/elements' style='color:<?php echo getSiteColor() ?>;'>here</a> to see elements to use!</p></div>
+			<div style='padding:56px; text-align:center; width:100%;'><span style='font-size: 22px; font-weight:700'>Hello Edler this is Eric Duwel</span><br><p style='font-size:16px; margin:20px 0 0 0;'>This is a simple app format for creating Abre Apps! Click <a href='#starter/elements' style='color:<?php echo getSiteColor() ?>;'>here</a> to see elements to use!</p></div>
 		</div>
 	</div>
 </div>
